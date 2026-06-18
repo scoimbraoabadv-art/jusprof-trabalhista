@@ -1,0 +1,13 @@
+[build]
+  functions = "netlify/functions"
+  publish   = "."
+
+[[redirects]]
+  from   = "/api/mp-webhook"
+  to     = "/.netlify/functions/mp-webhook"
+  status = 200
+
+[[redirects]]
+  from   = "/api/mp-webhook/*"
+  to     = "/.netlify/functions/mp-webhook/:splat"
+  status = 200

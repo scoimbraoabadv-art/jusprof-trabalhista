@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JusProf Trabalhista — Cálculo Rescisório</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+*{box-sizing:border-box}:root{--dark:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f8fafc;--ok:#dcfce7;--warn:#fef3c7;--danger:#fee2e2;--info:#dbeafe}body{margin:0;background:var(--bg);color:var(--dark);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{display:grid;grid-template-columns:300px 1fr;min-height:100vh}aside{background:#fff;border-right:1px solid var(--line);padding:22px;position:sticky;top:0;height:100vh;overflow:auto}main{padding:26px;max-width:1460px;width:100%;margin:0 auto}.brand{display:flex;gap:12px;align-items:center;margin-bottom:20px}.logo{width:52px;height:52px;border-radius:18px;background:var(--dark);color:#fff;display:grid;place-items:center;font:800 28px Georgia,serif}h1{font-size:22px;margin:0}.sub{font-size:12px;color:var(--muted);margin:3px 0 0}nav button{width:100%;border:0;background:transparent;text-align:left;padding:12px 13px;border-radius:15px;margin:3px 0;color:#334155;font-weight:850;cursor:pointer}nav button:hover{background:#f1f5f9}.nav.active{background:var(--dark);color:#fff}.screen{display:none}.screen.active{display:block}.hero{background:var(--dark);color:#fff;border-radius:34px;padding:38px;display:grid;grid-template-columns:1.1fr .9fr;gap:24px;box-shadow:0 18px 35px rgba(15,23,42,.12)}.hero h2{font-size:42px;line-height:1.06;margin:12px 0}.hero p{color:#cbd5e1;line-height:1.6}.badge{display:inline-block;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:999px;font-weight:850;font-size:13px}.grid{display:grid;gap:18px;margin-top:20px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.four{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:#fff;border:1px solid var(--line);border-radius:26px;padding:22px;box-shadow:0 8px 22px rgba(15,23,42,.05)}.card.dark{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);box-shadow:none}.card.dark p{color:#cbd5e1}.head h2{font-size:31px;margin:0 0 8px}.head p,.muted{color:var(--muted);line-height:1.55}.notice{background:var(--warn);color:#78350f;border-radius:18px;padding:14px;margin:14px 0;line-height:1.5;font-size:14px}.notice.ok{background:var(--ok);color:#14532d}.notice.danger{background:var(--danger);color:#7f1d1d}.notice.info{background:var(--info);color:#1e3a8a}label{display:block;font-size:13px;font-weight:850;color:#334155;margin-bottom:10px}input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:14px;padding:11px 12px;font:inherit;background:#fff;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--dark);box-shadow:0 0 0 3px rgba(15,23,42,.08)}.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.form.three{grid-template-columns:repeat(3,minmax(0,1fr))}.form.four{grid-template-columns:repeat(4,minmax(0,1fr))}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}button.primary,button.secondary,button.good,button.dangerbtn{border:0;border-radius:15px;padding:11px 15px;font-weight:900;cursor:pointer}.primary{background:var(--dark);color:#fff}.secondary{background:#e2e8f0;color:var(--dark)}.good{background:#15803d;color:#fff}.dangerbtn{background:#b91c1c;color:#fff}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}.metric{background:#f8fafc;border:1px solid var(--line);border-radius:18px;padding:15px}.metric span{display:block;color:var(--muted);font-size:13px}.metric strong{display:block;font-size:21px;margin-top:6px}.metric.hot{background:var(--dark);color:#fff}.metric.hot span{color:#cbd5e1}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:20px;margin-top:14px}table{border-collapse:collapse;width:100%;min-width:980px;background:#fff}th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left}th{background:#f1f5f9;font-size:12px;color:#334155}.memory{white-space:pre-wrap;background:#f8fafc;border:1px solid var(--line);border-radius:18px;padding:16px;font-family:"Courier New",monospace;font-size:13px;line-height:1.5;overflow:auto}.toast{position:fixed;right:22px;bottom:22px;background:var(--dark);color:#fff;border-radius:16px;padding:13px 17px;opacity:0;transform:translateY(18px);transition:.2s;z-index:200;box-shadow:0 15px 30px rgba(0,0,0,.2)}.toast.show{opacity:1;transform:translateY(0)}.loader-bg,.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.72);display:none;align-items:center;justify-content:center;z-index:180;padding:20px}.loader-bg.show,.modal-bg.show{display:flex}.loader,.modal{background:#fff;border-radius:28px;padding:28px;max-width:920px;max-height:92vh;overflow:auto}.hourglass{font-size:54px;animation:flip 1.4s infinite}.bar{height:11px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin-top:16px}.bar span{display:block;height:100%;width:35%;background:var(--dark);border-radius:999px;animation:move 1.1s infinite}@keyframes move{0%{transform:translateX(-110%)}100%{transform:translateX(330%)}}@keyframes flip{0%,100%{transform:rotate(0)}50%{transform:rotate(180deg)}}.doc-row,.value-row{display:grid;grid-template-columns:1.8fr .7fr auto;gap:8px;align-items:center;background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:8px;margin:7px 0}.value-row{grid-template-columns:1.2fr .7fr .7fr auto}.small{font-size:12px;color:#64748b}.module-block{margin-top:18px;padding-top:18px;border-top:1px dashed #cbd5e1}@media(max-width:980px){.app{grid-template-columns:1fr}aside{height:auto;position:relative}.hero,.two,.three,.four,.form,.form.three,.form.four,.metrics,.doc-row,.value-row{grid-template-columns:1fr}main{padding:15px}.hero h2{font-size:32px}}
+</style></head><body>
+<div class="modal-bg" id="termsModal"><div class="modal"><h2>Termo de Responsabilidade, Uso e LGPD — JusProf Trabalhista</h2><p>Ferramenta de apoio para cálculo trabalhista/rescisório. O usuário deve conferir datas, salário-base, verbas, FGTS, abatimentos, parâmetros da sentença e resultados antes do uso.</p><div class="form"><label>Nome<input id="loginNome"></label><label>E-mail<input id="loginEmail"></label><label>OAB/Registro<input id="loginRegistro"></label><label>Categoria<select id="loginCategoria"><option>Trabalhista — cálculo por uso</option></select></label></div><div class="notice info"><strong>LGPD e armazenamento:</strong> nesta versão HTML, os dados básicos podem ficar apenas no navegador do próprio usuário. Os cálculos e documentos não ficam salvos automaticamente no sistema. Para guardar o resultado, o usuário deve baixar PDF/Excel ou copiar a memória de cálculo. Versão profissional exige backend seguro e política própria de retenção/exclusão.</div><label><input type="checkbox" id="acceptTerms" style="width:auto;margin-right:8px"> Li e aceito os termos.</label><div class="actions"><button class="primary" onclick="App.acceptTerms()">Aceitar e entrar</button></div></div></div>
+<div class="loader-bg" id="loader"><div class="loader"><div class="hourglass">⌛</div><h2>Processando</h2><p id="loaderStep" class="muted">Iniciando...</p><div class="bar"><span></span></div><p><strong>Tempo:</strong> <span id="loaderTime">0s</span></p></div></div>
+<div class="app"><aside><div class="brand"><div class="logo">§</div><div><h1>JusProf</h1><p class="sub">Trabalhista</p></div></div><nav><button class="nav active" data-screen="inicio">Início</button><button class="nav" data-screen="cadastro">Cadastro obrigatório</button>
+    <button class="nav" data-screen="pagamento">Pagamento</button><button class="nav" data-screen="leitura">Ler sentença/documento</button><button class="nav" data-screen="rescisao">Cálculo rescisório</button><button class="nav" data-screen="manual">Inserção manual</button><button class="nav" data-screen="relatorio">Relatório</button><button class="nav" data-screen="metricas">Métricas</button><button class="nav" data-screen="termos">Termos/LGPD</button></nav><div class="notice"><strong>Preço:</strong> R$ 19,90 por cálculo.</div></aside><main>
+<section id="inicio" class="screen active"><div class="hero"><div><span class="badge">Trabalhista por cálculo</span><h2>JusProf Trabalhista funcional.</h2><p>Cálculo rescisório com leitura de sentença, inserção manual, saldo de salário, aviso prévio, férias, 1/3, 13º, FGTS e relatório.</p><div class="actions"><button class="primary" onclick="App.show('rescisao')">Fazer cálculo</button><button class="secondary" onclick="App.show('leitura')">Ler sentença</button></div></div><div class="grid"><div class="card dark"><h3>Manual e automático</h3><p>Lê documentos e permite inserir valores/datas manualmente.</p></div><div class="card dark"><h3>Manual</h3><p>Relatório com origem dos valores e memória de cálculo.</p></div></div></div></section>
+
+
+
+<section id="cadastro" class="screen">
+  <div class="head">
+    <h2>Cadastro rápido</h2>
+    <p>Antes de calcular, informe apenas os dados mínimos para identificação.</p>
+  </div>
+
+  <div class="card">
+    <h3>Dados do usuário</h3>
+
+    <div class="notice info">
+      Cadastro simplificado. Os cálculos são gerados na tela e podem ser exportados pelo usuário, mas não ficam salvos automaticamente no sistema.
+    </div>
+
+    <div class="form">
+      <label>Nome completo *
+        <input id="cadNome" placeholder="Nome completo">
+      </label>
+
+      <label>E-mail *
+        <input id="cadEmail" placeholder="email@exemplo.com">
+      </label>
+    </div>
+
+    <div class="actions">
+      <button class="primary" onclick="App.saveRequiredRegistration()">Salvar cadastro</button>
+      <button class="secondary" onclick="App.loadRequiredRegistration()">Carregar cadastro</button>
+      <button class="dangerbtn" onclick="App.clearRequiredRegistration()">Excluir cadastro</button>
+    </div>
+
+    <div id="cadStatus" class="notice">
+      Nenhum cadastro salvo.
+    </div>
+  </div>
+</section>
+
+<section id="pagamento" class="screen"><div class="head"><h2>Pagamento por cálculo</h2><p>Cobrança avulsa, sem mensalidade. Escolha PIX ou cartão de crédito/débito.</p></div><div class="grid two"><div class="card"><h3>Cálculo trabalhista avulso</h3><div class="metric hot"><span>Valor</span><strong>R$ 19,90</strong></div></div></div></section>
+<section id="leitura" class="screen"><div class="head"><h2>Ler sentença, decisão, acordo, TRCT, holerite ou planilha</h2><p>Extração geral para preencher o cálculo trabalhista.</p></div><div class="grid two"><div class="card"><h3>Documentos</h3><input type="file" id="generalFiles" multiple accept=".pdf,.docx,.txt,.xlsx,.xls,.csv,.html,.htm" onchange="App.handleFiles(this.files)"><div class="actions"><button class="primary" onclick="App.handleFiles(App.el('generalFiles').files)">Anexar</button><button class="secondary" onclick="App.readDocs()">Ler documentos</button><button class="dangerbtn" onclick="App.clearDocs()">Excluir todos</button></div><div id="docs-geral" class="notice info">Nenhum documento anexado.</div><textarea id="generalText" rows="11" placeholder="Texto extraído ou colado manualmente"></textarea></div><div class="card"><h3>Dados extraídos</h3><div class="form"><label>Processo<input id="gProcesso"></label><label>Reclamante/Empregado<input id="gAutor"></label><label>Reclamada/Empregador<input id="gReu"></label><label>Salário-base<input id="gSalario" type="number" step="0.01"></label><label>Admissão<input id="gAdmissao" type="date"></label><label>Saída<input id="gSaida" type="date"></label></div><div id="extractNotice" class="notice info">Leia um documento para extrair dados. A conferência manual é obrigatória.</div><div class="actions"><button class="good" onclick="App.applyExtractedToRescisao()">Aplicar no cálculo rescisório</button><button class="primary" onclick="App.show('rescisao')">Ir para cálculo</button></div></div></div></section>
+<section id="rescisao" class="screen"><div class="head"><h2>Cálculo rescisório trabalhista</h2><p>Saldo de salário, aviso prévio, férias, 1/3, 13º e FGTS.</p></div><div class="card"><h3>Dados do contrato</h3><div class="form four"><label>Empregado/Reclamante<input id="empregado"></label><label>Empregador/Reclamada<input id="empregador"></label><label>Data de admissão<input id="admissao" type="date"></label><label>Data de saída<input id="saida" type="date"></label><label>Salário mensal<input id="salario" type="number" step="0.01" value="0"></label><label>Dias trabalhados no mês da saída<input id="diasSaldo" type="number" step="1" min="0" max="31" value="0"></label><label>Tipo de aviso prévio<select id="tipoAviso" onchange="App.toggleAviso()"><option value="cumprido">Cumprido/trabalhado</option><option value="indenizado">Indenizado</option><option value="nao">Não devido/não informado</option></select></label><label>Valor do aviso indenizado<input id="valorAviso" type="number" step="0.01" value="0"></label><label>Férias vencidas pendentes<input id="feriasVencidasQtd" type="number" step="1" value="0"></label><label>Meses de férias proporcionais<input id="mesesFeriasProp" type="number" step="1" min="0" max="12" value="0"></label><label>Meses de 13º proporcional<input id="meses13" type="number" step="1" min="0" max="12" value="0"></label><label>Saldo FGTS existente<input id="fgtsBaseExistente" type="number" step="0.01" value="0"></label><label>Multa FGTS (%)<input id="multaFgtsPct" type="number" step="0.01" value="40"></label><label>Abatimentos/descontos<input id="abatimentos" type="number" step="0.01" value="0"></label><label>Correção/Juros (%)<input id="corJuros" type="number" step="0.01" value="0"></label></div><div class="notice info"><strong>Observação:</strong> meses proporcionais podem ser preenchidos manualmente. “Sugerir proporções” estima pelas datas, mas deve ser conferido.</div><div class="actions"><button class="secondary" onclick="App.sugerirProporcoes()">Sugerir proporções pelas datas</button><button class="primary" onclick="App.calcRescisao()">Calcular rescisão</button><button class="good" onclick="App.exportPDF()">PDF</button><button class="secondary" onclick="App.exportExcel()">Excel</button></div><div class="metrics"><div class="metric"><span>Saldo salário</span><strong id="rSaldoSalario">R$ 0,00</strong></div><div class="metric"><span>Férias + 1/3</span><strong id="rFerias">R$ 0,00</strong></div><div class="metric"><span>13º</span><strong id="rDecimo">R$ 0,00</strong></div><div class="metric hot"><span>Total líquido</span><strong id="rTotal">R$ 0,00</strong></div></div></div><div class="card module-block"><h3>Detalhamento</h3><div class="tablewrap"><table><thead><tr><th>Verba</th><th>Base</th><th>Memória</th><th>Valor</th></tr></thead><tbody id="detalheBody"></tbody></table></div></div></section>
+<section id="manual" class="screen"><div class="head"><h2>Inserção manual</h2><p>Inclua valores e datas manualmente quando a leitura automática não for suficiente.</p></div><div class="card"><div class="form three"><label>Descrição<input id="manualDesc" placeholder="Ex.: diferença de FGTS, desconto, verba deferida"></label><label>Natureza<select id="manualNatureza"><option value="acrescimo">Acréscimo/verba devida</option><option value="abatimento">Abatimento/desconto</option><option value="informativo">Informativo</option></select></label><label>Valor<input id="manualValor" type="number" step="0.01" value="0"></label><label>Data inicial<input id="manualDataInicial" type="date"></label><label>Data final<input id="manualDataFinal" type="date"></label><label>Origem<input id="manualOrigem" placeholder="Ex.: sentença, TRCT, manual"></label></div><label>Observação<textarea id="manualObs" rows="3"></textarea></label><div class="actions"><button class="primary" onclick="App.addManual()">Lançar manualmente</button><button class="dangerbtn" onclick="App.clearManual()">Limpar lançamentos</button><button class="good" onclick="App.calcRescisao()">Recalcular com manuais</button></div><div id="manualList" class="memory">Nenhum lançamento manual.</div></div></section>
+<section id="relatorio" class="screen"><div class="head"><h2>Relatório / memória</h2><p>Último cálculo realizado.</p></div><div class="card"><pre id="memoryBox" class="memory">Nenhum cálculo gerado.</pre><div class="actions"><button class="primary" onclick="App.copyMemory()">Copiar</button><button class="good" onclick="App.exportPDF()">PDF</button><button class="secondary" onclick="App.exportExcel()">Excel</button></div></div></section>
+<section id="metricas" class="screen"><div class="head"><h2>Métricas</h2></div><div class="card"><div class="metrics"><div class="metric"><span>Hoje</span><strong id="mHoje">0</strong></div><div class="metric"><span>Mês</span><strong id="mMes">0</strong></div><div class="metric"><span>Total</span><strong id="mTotal">0</strong></div><div class="metric hot"><span>Usuário</span><strong id="mUser">-</strong></div></div><div id="metricsTable"></div></div></section>
+<section id="configuracoes" class="screen">
+  <div class="head"><h2>Configurações de cobrança</h2><p>Cadastre ou altere os dados usados para cobrança por PIX ou cartão.</p></div>
+  <div class="card">
+    <h3>Dados do recebedor</h3>
+    <div class="notice info">
+      <strong>Segurança:</strong> não coloque chave secreta de API dentro deste HTML público. Para cobrança real por cartão, use checkout/link de pagamento ou backend com gateway/webhook.
+    </div>
+    <div class="form three">
+      <label>Nome/empresa recebedora<input id="cfgRecebedorNome" placeholder="Ex.: JusProf / escritório"></label>
+      <label>CPF/CNPJ do recebedor<input id="cfgRecebedorDoc" placeholder="Opcional"></label>
+      <label>E-mail financeiro<input id="cfgEmailFinanceiro" placeholder="financeiro@..."></label>
+      <label>Chave PIX<input id="cfgPixKey" placeholder="CPF, CNPJ, e-mail, celular ou chave aleatória" value="398429ee-8c62-4a59-8d83-f15ce0505ddd"></label>
+      <label>Tipo da chave PIX<select id="cfgPixTipo"><option>CPF</option><option>CNPJ</option><option>E-mail</option><option>Celular</option><option selected>Chave aleatória</option></select></label>
+      <label>Cidade do recebedor<input id="cfgCidade" placeholder="Ex.: PARACATU"></label>
+      <label>Valor por cálculo trabalhista<input id="cfgValorCalculo" type="number" step="0.01" value="19.90"></label>
+      <label>Descrição padrão<input id="cfgDescricao" placeholder="Cálculo Trabalhista JusProf"></label>
+      <label>WhatsApp/suporte<input id="cfgWhatsapp" placeholder="Opcional"></label>
+    </div>
+  </div>
+  <div class="card module-block">
+    <h3>Cartão de crédito/débito / Gateway</h3>
+    <div class="notice info"><strong>Cartão:</strong> o recebimento por cartão de crédito permanece disponível por link de checkout/gateway. Cadastre o link de pagamento quando contratar Mercado Pago, Asaas, Stripe, Pagar.me ou outro gateway.</div>
+    <div class="form three">
+      <label>Gateway<select id="cfgGateway"><option>Link de pagamento</option><option>Mercado Pago</option><option>Asaas</option><option>Stripe</option><option>Pagar.me</option><option>Outro</option></select></label>
+      <label>Link de checkout/cartão crédito ou débito<input id="cfgCheckoutLink" placeholder="Cole aqui o link de pagamento do gateway" value="https://mpago.la/18cwbQL"></label>
+      <label>URL do webhook/backend<input id="cfgWebhookUrl" placeholder="Opcional — para versão profissional" value="398429ee-8c62-4a59-8d83-f15ce0505ddd"></label>
+      <label>Chave pública do gateway<input id="cfgPublicKey" placeholder="Somente chave pública, se houver"></label>
+      <label>Moeda<select id="cfgMoeda"><option>BRL</option></select></label>
+      <label>Ambiente<select id="cfgAmbiente"><option>Teste</option><option>Produção</option></select></label>
+    </div>
+    <div class="notice danger">
+      Para produção, não use o campo de cartão local do HTML para processar cartão. Use link/checkout do gateway ou backend seguro com tokenização.
+    </div>
+    <div class="actions">
+      <button class="primary" onclick="App.saveBillingConfig()">Salvar configurações</button>
+      <button class="secondary" onclick="App.loadBillingConfig()">Carregar configurações</button>
+      <button class="good" onclick="App.applyBillingConfigToPayment()">Aplicar ao pagamento</button>
+      <button class="dangerbtn" onclick="App.clearBillingConfig()">Limpar configurações</button>
+    </div>
+    <div id="cfgStatus" class="notice">Nenhuma alteração salva nesta sessão.</div>
+  </div>
+</section>
+
+<section id="termos" class="screen">
+  <div class="head"><h2>Termos/LGPD</h2></div>
+  <div class="card">
+    <h3>Termo de responsabilidade</h3>
+    <p>O JusProf Trabalhista é uma ferramenta de apoio para elaboração de cálculos. O usuário é responsável por conferir dados, datas, salário-base, verbas, índices, juros, FGTS, abatimentos, documentos anexados e resultados antes de utilizar o cálculo em qualquer procedimento administrativo ou judicial.</p>
+    <p>Os cálculos são processados localmente e não ficam salvos automaticamente no sistema. Para preservar o resultado, o usuário deverá exportar o relatório em PDF/Excel ou copiar a memória de cálculo. Ao excluir dados locais ou fechar/limpar o navegador, as informações podem ser perdidas.</p>
+    <p>Documentos anexados, valores manuais e dados informados devem ser conferidos pelo usuário. A ferramenta não substitui a análise técnica e profissional do caso concreto.</p>
+    <div class="actions"><button class="dangerbtn" onclick="localStorage.clear();location.reload()">Apagar dados locais</button></div>
+  </div>
+</section>
+</main></div><div class="toast" id="toast"></div>
+<script>
+const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',audit:[],detalhe:[]},el(id){return document.getElementById(id)},money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})},num(v){if(typeof v==='number')return Number.isFinite(v)?v:0;let s=String(v??'').replace(/R\$/gi,'').replace(/\s/g,'').trim();if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');else if(s.includes(','))s=s.replace(',','.');const n=Number(s);return Number.isFinite(n)?n:0},esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))},norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()},toast(msg){const t=this.el('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)},show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav').forEach(b=>b.classList.remove('active'));this.el(id).classList.add('active');const b=document.querySelector(`.nav[data-screen="${id}"]`);if(b)b.classList.add('active');if(id==='metricas')this.renderMetrics();if(id==='relatorio')this.el('memoryBox').textContent=this.state.memory;this.recordUse(id);scrollTo({top:0,behavior:'smooth'})},startLoader(step){this.loaderStart=Date.now();this.el('loader').classList.add('show');this.el('loaderStep').textContent=step||'Processando...';this.el('loaderTime').textContent='0s';clearInterval(this.loaderTimer);this.loaderTimer=setInterval(()=>this.el('loaderTime').textContent=Math.floor((Date.now()-this.loaderStart)/1000)+'s',500)},setLoader(step){this.el('loaderStep').textContent=step},stopLoader(){clearInterval(this.loaderTimer);this.el('loader').classList.remove('show')},user(){try{return JSON.parse(localStorage.getItem('jusprofTrabUser')||'null')||{}}catch(e){return{}}},acceptTerms(){if(!this.el('acceptTerms').checked)return this.toast('É necessário aceitar os termos.');const u={nome:this.el('loginNome').value,email:this.el('loginEmail').value,registro:this.el('loginRegistro').value,categoria:this.el('loginCategoria').value,aceiteEm:new Date().toISOString()};if(!u.nome||!u.email)return this.toast('Informe nome e e-mail.');localStorage.setItem('jusprofTrabUser',JSON.stringify(u));this.el('termsModal').classList.remove('show');this.recordUse('aceite_termos')},recordUse(action){const u=this.user(),now=new Date(),arr=JSON.parse(localStorage.getItem('jusprofTrabMetrics')||'[]');arr.push({data:now.toISOString(),dia:now.toISOString().slice(0,10),mes:now.toISOString().slice(0,7),acao:action,usuario:u.nome||'não registrado'});localStorage.setItem('jusprofTrabMetrics',JSON.stringify(arr.slice(-3000)))},renderMetrics(){const arr=JSON.parse(localStorage.getItem('jusprofTrabMetrics')||'[]'),today=new Date().toISOString().slice(0,10),mes=new Date().toISOString().slice(0,7);this.el('mHoje').textContent=arr.filter(x=>x.dia===today).length;this.el('mMes').textContent=arr.filter(x=>x.mes===mes).length;this.el('mTotal').textContent=arr.length;this.el('mUser').textContent=this.user().nome||'-';this.el('metricsTable').innerHTML='<div class="tablewrap"><table><thead><tr><th>Data</th><th>Usuário</th><th>Ação</th></tr></thead><tbody>'+arr.slice(-60).reverse().map(x=>`<tr><td>${new Date(x.data).toLocaleString('pt-BR')}</td><td>${this.esc(x.usuario)}</td><td>${this.esc(x.acao)}</td></tr>`).join('')+'</tbody></table></div>'},fileKey(f){return[f.name||'',f.size||0,f.lastModified||0].join('|')},handleFiles(filesList){const files=Array.from(filesList||[]);if(!files.length)return;const arr=this.state.docs.geral,seen=new Set(arr.map(f=>this.fileKey(f)));files.forEach(f=>{if(!seen.has(this.fileKey(f))){arr.push(f);seen.add(this.fileKey(f))}});this.renderDocs();this.toast(files.length+' arquivo(s) vinculado(s).')},clearDocs(){this.state.docs.geral=[];const input=this.el('generalFiles');if(input)input.value='';this.renderDocs();this.toast('Documentos excluídos.')},renderDocs(){const box=this.el('docs-geral'),arr=this.state.docs.geral;box.innerHTML=arr.length?arr.map((f,i)=>`<div class="doc-row"><span>${this.esc(f.name)}</span><span>${Math.round((f.size||0)/1024)} KB</span><button class="dangerbtn" onclick="App.state.docs.geral.splice(${i},1);App.renderDocs()">Excluir</button></div>`).join(''):'Nenhum documento anexado.'},async readDocs(){const arr=this.state.docs.geral;if(!arr.length)return this.toast('Anexe documentos.');this.startLoader('Lendo documentos...');let txt='';try{for(const f of arr){this.setLoader('Lendo '+f.name);txt+=`\n--- ${f.name} ---\n`+await this.readFile(f)}this.el('generalText').value=(this.el('generalText').value?this.el('generalText').value+'\n':'')+txt;this.extractGeneral(txt);this.toast('Documento lido.')}catch(e){console.error(e);this.toast('Erro ao ler: '+e.message)}finally{this.stopLoader()}},async readFile(file){const ext=(file.name.split('.').pop()||'').toLowerCase();if(ext==='pdf')return await this.readPDF(file);if(ext==='docx')return await this.readDOCX(file);if(['xlsx','xls','csv'].includes(ext))return await this.readSheetText(file);return await file.text()},async readPDF(file){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';const buf=await file.arrayBuffer(),pdf=await pdfjsLib.getDocument({data:buf}).promise;let out='';for(let p=1;p<=pdf.numPages;p++){this.setLoader(`Lendo ${file.name} — página ${p}/${pdf.numPages}`);const page=await pdf.getPage(p),content=await page.getTextContent(),items=content.items.map(it=>({text:String(it.str||'').trim(),x:Math.round((it.transform&&it.transform[4])||0),y:Math.round((it.transform&&it.transform[5])||0)})).filter(it=>it.text),rows={};items.forEach(it=>{const y=String(Math.round(it.y/3)*3);rows[y]=rows[y]||[];rows[y].push(it)});out+=`\n--- PÁGINA ${p} ---\n`;Object.keys(rows).map(Number).sort((a,b)=>b-a).forEach(y=>{const line=rows[String(y)].sort((a,b)=>a.x-b.x).map(it=>it.text).join(' ').replace(/\s+/g,' ').trim();if(line)out+=line+'\n'})}return out},async readDOCX(file){const buf=await file.arrayBuffer();const r=await mammoth.extractRawText({arrayBuffer:buf});return r.value},async readSheetText(file){let wb;if(file.name.toLowerCase().endsWith('.csv'))wb=XLSX.read(await file.text(),{type:'string'});else wb=XLSX.read(await file.arrayBuffer(),{type:'array'});let out='';wb.SheetNames.forEach(n=>{out+='\nABA: '+n+'\n'+XLSX.utils.sheet_to_csv(wb.Sheets[n],{FS:';'})});return out},parseDateBR(s){if(!s)return'';const m=String(s).match(/\b(\d{2})\/(\d{2})\/(\d{4})\b/);if(m)return`${m[3]}-${m[2]}-${m[1]}`;const iso=String(s).match(/\b(\d{4})-(\d{2})-(\d{2})\b/);return iso?iso[0]:''},extractMoneyNear(text,terms){const clean=String(text||'').replace(/\s+/g,' '),n=this.norm(clean);let best=0;terms.forEach(term=>{let idx=n.indexOf(this.norm(term));if(idx>=0){const ctx=clean.slice(Math.max(0,idx-180),idx+380),vals=[...ctx.matchAll(/(?:R\$\s*)?\d{1,3}(?:\.\d{3})*,\d{2}|(?:R\$\s*)?\d+,\d{2}/gi)].map(m=>this.num(m[0])).filter(v=>v);if(vals.length)best=vals[0]}});return best},extractGeneral(text){const clean=String(text||'').replace(/\s+/g,' '),processo=(clean.match(/\b\d{7}-\d{2}\.\d{4}\.\d(?:\.\d{2})?\.\d{4}\b/)||[])[0]||'',autor=(clean.match(/(?:reclamante|empregado|autor)\s*[:\-]?\s*([A-ZÁÉÍÓÚÂÊÔÃÕÇ][A-ZÁÉÍÓÚÂÊÔÃÕÇa-záéíóúâêôãõç\s\.\-&]{5,120})/i)||[])[1]||'',reu=(clean.match(/(?:reclamada|empregador|réu|reu)\s*[:\-]?\s*([A-ZÁÉÍÓÚÂÊÔÃÕÇ][A-ZÁÉÍÓÚÂÊÔÃÕÇa-záéíóúâêôãõç\s\.\-&]{5,140})/i)||[])[1]||'',salario=this.extractMoneyNear(clean,['salário','salario','remuneração','remuneracao','último salário','ultimo salario']),adm=(clean.match(/(?:admiss[aã]o|admitid[oa]\s+em|data\s+de\s+admiss[aã]o)\D{0,60}(\d{2}\/\d{2}\/\d{4})/i)||[])[1]||'',sai=(clean.match(/(?:sa[ií]da|demiss[aã]o|dispensa|rescis[aã]o|data\s+de\s+sa[ií]da)\D{0,60}(\d{2}\/\d{2}\/\d{4})/i)||[])[1]||'',trecho=this.extractLaborExcerpt(clean);this.el('gProcesso').value=processo||this.el('gProcesso').value;this.el('gAutor').value=autor.trim()||this.el('gAutor').value;this.el('gReu').value=reu.trim()||this.el('gReu').value;this.el('gSalario').value=salario||this.el('gSalario').value;if(adm)this.el('gAdmissao').value=this.parseDateBR(adm);if(sai)this.el('gSaida').value=this.parseDateBR(sai);this.el('extractNotice').className='notice ok';this.el('extractNotice').innerHTML=`<strong>Extração trabalhista:</strong><br>Processo: ${processo||'não localizado'}<br>Reclamante: ${autor.trim()||'não localizado'}<br>Reclamada: ${reu.trim()||'não localizado'}<br>Salário-base: ${salario?this.money(salario):'não localizado'}<br>Admissão: ${adm||'não localizada'} • Saída: ${sai||'não localizada'}<details style="margin-top:8px"><summary>Trecho relevante encontrado</summary><pre class="memory">${this.esc(trecho||'Nenhum trecho específico localizado.')}</pre></details>`;return{processo,autor:autor.trim(),reu:reu.trim(),salario,admissao:this.parseDateBR(adm),saida:this.parseDateBR(sai),trecho}},extractLaborExcerpt(text){const clean=String(text||'').replace(/\s+/g,' '),n=this.norm(clean);for(const t of ['saldo de salario','saldo de salário','ferias','férias','13o','13º','decimo terceiro','décimo terceiro','fgts','aviso previo','aviso prévio','rescisao','rescisão','verbas rescisorias','verbas rescisórias']){const idx=n.indexOf(this.norm(t));if(idx>=0)return clean.slice(Math.max(0,idx-700),Math.min(clean.length,idx+1800))}return''},applyExtractedToRescisao(){const d=this.extractGeneral(this.el('generalText').value||'');if(d.autor)this.el('empregado').value=d.autor;if(d.reu)this.el('empregador').value=d.reu;if(d.salario)this.el('salario').value=d.salario;if(d.admissao)this.el('admissao').value=d.admissao;if(d.saida)this.el('saida').value=d.saida;this.show('rescisao');this.toast('Dados aplicados no cálculo.')},toggleAviso(){if(this.el('tipoAviso').value!=='indenizado')this.el('valorAviso').value=0},monthsBetween(adm,sai){if(!adm||!sai)return 0;const a=new Date(adm+'T00:00:00'),s=new Date(sai+'T00:00:00');let months=(s.getFullYear()-a.getFullYear())*12+(s.getMonth()-a.getMonth());if(s.getDate()>=15)months+=1;return Math.max(0,months)},sugerirProporcoes(){const adm=this.el('admissao').value,sai=this.el('saida').value;if(!adm||!sai)return this.toast('Informe admissão e saída.');const s=new Date(sai+'T00:00:00');this.el('diasSaldo').value=s.getDate();this.el('meses13').value=Math.min(12,Math.max(0,s.getMonth()+1));const mesesTotal=this.monthsBetween(adm,sai);this.el('mesesFeriasProp').value=Math.min(12,mesesTotal%12||12);this.toast('Proporções sugeridas. Confira manualmente.')},row(verba,base,memoria,valor){this.state.detalhe.push({verba,base,memoria,valor});return valor},calcRescisao(){this.state.detalhe=[];const salario=this.num(this.el('salario').value),dias=this.num(this.el('diasSaldo').value),tipo=this.el('tipoAviso').value,aviso=tipo==='indenizado'?this.num(this.el('valorAviso').value):0,feriasVencQtd=this.num(this.el('feriasVencidasQtd').value),mesFer=this.num(this.el('mesesFeriasProp').value),mes13=this.num(this.el('meses13').value),fgtsBase=this.num(this.el('fgtsBaseExistente').value),multaPct=this.num(this.el('multaFgtsPct').value),abat=this.num(this.el('abatimentos').value),corPct=this.num(this.el('corJuros').value);const saldo=this.row('Saldo de salário',salario,`salário ÷ 30 × ${dias} dias`,salario/30*dias),feriasVenc=this.row('Férias vencidas',salario,`${feriasVencQtd} período(s) × salário`,salario*feriasVencQtd),tercoVenc=this.row('1/3 sobre férias vencidas',feriasVenc,'férias vencidas ÷ 3',feriasVenc/3),feriasProp=this.row('Férias proporcionais',salario,`salário ÷ 12 × ${mesFer} meses`,salario/12*mesFer),tercoProp=this.row('1/3 sobre férias proporcionais',feriasProp,'férias proporcionais ÷ 3',feriasProp/3),decimo=this.row('13º proporcional',salario,`salário ÷ 12 × ${mes13} meses`,salario/12*mes13),avisoVal=this.row('Aviso prévio indenizado',salario,tipo==='indenizado'?'valor informado pelo usuário':'não indenizado',aviso),fgtsMes=this.row('FGTS estimado sobre verbas salariais',saldo+decimo+aviso,'8% sobre saldo, 13º e aviso indenizado',(saldo+decimo+aviso)*0.08),multaFgts=this.row('Multa FGTS',fgtsBase+fgtsMes,`${multaPct}% sobre FGTS informado + FGTS estimado`,(fgtsBase+fgtsMes)*multaPct/100);let manAdd=0,manSub=0;this.state.manual.forEach(v=>{if(v.natureza==='acrescimo')manAdd+=this.num(v.valor);if(v.natureza==='abatimento')manSub+=this.num(v.valor)});if(manAdd)this.row('Lançamentos manuais — acréscimos',manAdd,'informado manualmente pelo usuário',manAdd);if(manSub)this.row('Lançamentos manuais — abatimentos',manSub,'informado manualmente pelo usuário',-manSub);const bruto=this.state.detalhe.reduce((a,r)=>a+this.num(r.valor),0),cor=bruto*corPct/100,total=bruto+cor-abat;this.el('rSaldoSalario').textContent=this.money(saldo);this.el('rFerias').textContent=this.money(feriasVenc+tercoVenc+feriasProp+tercoProp);this.el('rDecimo').textContent=this.money(decimo);this.el('rTotal').textContent=this.money(total);this.renderDetalhe();this.state.memory=`JUSPROF TRABALHISTA — MEMÓRIA DE CÁLCULO\n\nEmpregado/Reclamante: ${this.el('empregado').value}\nEmpregador/Reclamada: ${this.el('empregador').value}\nAdmissão: ${this.el('admissao').value}\nSaída: ${this.el('saida').value}\nSalário mensal: ${this.money(salario)}\nTipo de aviso prévio: ${tipo}\n\nVERBAS:\n${this.state.detalhe.map(r=>`- ${r.verba}: ${r.memoria} = ${this.money(r.valor)}`).join('\n')}\n\nCorreção/Juros informados: ${this.money(cor)}\nAbatimentos/descontos: ${this.money(abat)}\nTOTAL LÍQUIDO ESTIMADO: ${this.money(total)}\n\nPreço do cálculo: R$ 19,90\n\nObservação: cálculo de apoio. Conferência profissional obrigatória.`;this.el('memoryBox').textContent=this.state.memory;this.recordUse('calculo_rescisorio');this.toast('Cálculo trabalhista realizado.');return total},renderDetalhe(){this.el('detalheBody').innerHTML=this.state.detalhe.map(r=>`<tr><td>${this.esc(r.verba)}</td><td>${this.money(r.base)}</td><td>${this.esc(r.memoria)}</td><td>${this.money(r.valor)}</td></tr>`).join('')},addManual(){const item={desc:this.el('manualDesc').value||'Valor manual',natureza:this.el('manualNatureza').value,valor:this.num(this.el('manualValor').value),dataInicial:this.el('manualDataInicial').value,dataFinal:this.el('manualDataFinal').value,origem:this.el('manualOrigem').value||'informado manualmente',obs:this.el('manualObs').value,data:new Date().toISOString()};if(!item.valor&&item.natureza!=='informativo')return this.toast('Informe um valor.');this.state.manual.push(item);this.renderManual();this.toast('Valor manual lançado.')},renderManual(){this.el('manualList').textContent=this.state.manual.length?this.state.manual.map((v,i)=>`[${i+1}] ${v.desc} — ${v.natureza} — ${this.money(v.valor)} — ${v.origem} — ${v.dataInicial||''} ${v.dataFinal||''}\n${v.obs||''}`).join('\n\n'):'Nenhum lançamento manual.'},clearManual(){this.state.manual=[];this.renderManual();this.toast('Lançamentos manuais excluídos.')},auditAll(){const alerts=[];if(!this.el('admissao').value)alerts.push('Atenção: data de admissão não informada.');if(!this.el('saida').value)alerts.push('Atenção: data de saída não informada.');if(!this.num(this.el('salario').value))alerts.push('Atenção: salário mensal não informado.');if(this.el('tipoAviso').value==='indenizado'&&!this.num(this.el('valorAviso').value))alerts.push('Atenção: aviso indenizado selecionado sem valor informado.');if(!alerts.length)alerts.push('OK: dados mínimos preenchidos. Conferir proporcionalidade de férias/13º e parâmetros da sentença.');this.el('auditList').textContent=alerts.join('\n');this.toast('Auditoria concluída.')},exportPDF(){const {jsPDF}=window.jspdf;const doc=new jsPDF();doc.setFontSize(14);doc.text('JusProf Trabalhista — Relatório',14,16);doc.setFontSize(9);doc.text(doc.splitTextToSize(this.state.memory||'Nenhum cálculo gerado.',180),14,28);doc.autoTable({startY:120,head:[['Verba','Base','Memória','Valor']],body:this.state.detalhe.map(r=>[r.verba,this.money(r.base),r.memoria,this.money(r.valor)])});doc.save('relatorio_jusprof_trabalhista.pdf')},exportExcel(){const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(this.state.detalhe.map(r=>({Verba:r.verba,Base:r.base,Memoria:r.memoria,Valor:r.valor}))), 'Memória');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(this.state.manual),'Manuais');XLSX.writeFile(wb,'relatorio_jusprof_trabalhista.xlsx')},copyMemory(){navigator.clipboard.writeText(this.state.memory||'');this.toast('Copiado.')},init(){if(!this.user().nome)this.el('termsModal').classList.add('show');document.querySelectorAll('.nav').forEach(b=>b.onclick=()=>this.show(b.dataset.screen));this.renderDocs();this.renderManual();this.recordUse('entrada')}};window.addEventListener('load',()=>App.init());
+</script>
+<script>
+/* JusProf Trabalhista — método de cobrança PIX ou cartão de crédito.
+   Pagamento: não processa pagamento real. Integração real exige gateway/backend/webhook.
+*/
+(function(){
+  if(window.__jusprofTrabPagamentoPixCartaoV1) return;
+  window.__jusprofTrabPagamentoPixCartaoV1 = true;
+
+  App.valorCalculo = 19.90;
+
+  App.insertPaymentMethods = function(){
+    const pagamento = this.el("pagamento");
+    if(!pagamento || this.el("paymentMethodsPanel")) return;
+
+    const card = document.createElement("div");
+    card.id = "paymentMethodsPanel";
+    card.className = "card module-block";
+    card.innerHTML = `
+      <h3>Método de cobrança</h3>
+      <div class="notice info">
+        <strong>Valor do cálculo:</strong> R$ 19,90 por cálculo avulso, sem mensalidade.
+      </div>
+      <div class="form three">
+        <label>Forma de pagamento
+          <select id="payMethod" onchange="App.renderPaymentMethod()">
+            <option value="pix">PIX</option>
+            <option value="cartao">Cartão de crédito/débito</option>
+          </select>
+        </label>
+        <label>Nome do pagador
+          <input id="payName" placeholder="Nome do usuário/pagador">
+        </label>
+        <label>E-mail do pagador
+          <input id="payEmail" placeholder="email@exemplo.com">
+        </label>
+      </div>
+
+      <div id="pixPanel" class="module-block">
+        <h3>PIX</h3>
+        <div class="form">
+          <label>Chave PIX
+            <input id="pixKey" value="398429ee-8c62-4a59-8d83-f15ce0505ddd">
+          </label>
+          <label>Valor
+            <input id="pixValue" type="number" step="0.01" value="19.90">
+          </label>
+        </div>
+        <label>PIX copia e cola
+          <textarea id="pixCopyPaste" rows="4" readonly></textarea>
+        </label>
+        <div class="actions">
+          <button class="secondary" onclick="App.generatePixTest()">Gerar PIX</button>
+          <button class="primary" onclick="App.copyPix()">Copiar PIX</button>
+        </div>
+      </div>
+
+      <div id="cardPanel" class="module-block" style="display:none">
+        <h3>Cartão de crédito/débito</h3>
+        <div class="form four">
+          <label>Número do cartão
+            <input id="cardNumber" inputmode="numeric" placeholder="0000 0000 0000 0000">
+          </label>
+          <label>Nome no cartão
+            <input id="cardName" placeholder="Nome impresso">
+          </label>
+          <label>Validade
+            <input id="cardExpiry" placeholder="MM/AA">
+          </label>
+          <label>CVV
+            <input id="cardCvv" inputmode="numeric" placeholder="000">
+          </label>
+        </div>
+        <div class="notice danger">
+          Para cartão de crédito/débito, use o checkout/link de pagamento cadastrado.
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="good" onclick="App.simulatePayment()">Registrar pagamento</button>
+        <button class="dangerbtn" onclick="App.clearPayment()">Limpar pagamento</button>
+      </div>
+
+      <div id="paymentStatus" class="notice">Nenhum pagamento registrado.</div>
+    `;
+
+    pagamento.appendChild(card);
+    this.generatePixTest();
+  };
+
+  App.renderPaymentMethod = function(){
+    const method = this.el("payMethod") ? this.el("payMethod").value : "pix";
+    if(this.el("pixPanel")) this.el("pixPanel").style.display = method === "pix" ? "block" : "none";
+    if(this.el("cardPanel")) this.el("cardPanel").style.display = method === "cartao" ? "block" : "none";
+  };
+
+  App.generatePixTest = function(){
+    const value = this.num(this.el("pixValue") ? this.el("pixValue").value : this.valorCalculo) || this.valorCalculo;
+    const key = this.el("pixKey") ? this.el("pixKey").value : "398429ee-8c62-4a59-8d83-f15ce0505ddd";
+    const name = this.el("payName") ? this.el("payName").value : "";
+    const pseudo = `PIX | JusProf Trabalhista | Valor: ${this.money(value)} | Chave: ${key} | Pagador: ${name || "não informado"}`;
+    if(this.el("pixCopyPaste")) this.el("pixCopyPaste").value = pseudo;
+    return pseudo;
+  };
+
+  App.copyPix = function(){
+    const txt = this.generatePixTest();
+    if(navigator.clipboard) navigator.clipboard.writeText(txt);
+    this.toast("PIX teste copiado.");
+  };
+
+  App.simulatePayment = function(){
+    const method = this.el("payMethod") ? this.el("payMethod").value : "pix";
+    const value = method === "pix"
+      ? (this.num(this.el("pixValue")?.value) || this.valorCalculo)
+      : this.valorCalculo;
+
+    const payment = {
+      status: "registrado",
+      metodo: method === "pix" ? "PIX" : "Cartão de crédito",
+      valor: value,
+      pagador: this.el("payName") ? this.el("payName").value : "",
+      email: this.el("payEmail") ? this.el("payEmail").value : "",
+      data: new Date().toISOString()
+    };
+
+    localStorage.setItem("jusprofTrabPayment", JSON.stringify(payment));
+
+    if(this.el("paymentStatus")){
+      this.el("paymentStatus").className = "notice ok";
+      this.el("paymentStatus").innerHTML =
+        `<strong>Pagamento registrado.</strong><br>`+
+        `Método: ${payment.metodo}<br>`+
+        `Valor: ${this.money(payment.valor)}<br>`+
+        `Pagador: ${this.esc(payment.pagador || "não informado")}<br>`+
+        `<small>Para pagamento real, integrar Mercado Pago, Asaas, Stripe, Pagar.me ou outro gateway com backend/webhook.</small>`;
+    }
+
+    this.toast("Pagamento registrado.");
+  };
+
+  App.clearPayment = function(){
+    localStorage.removeItem("jusprofTrabPayment");
+    if(this.el("paymentStatus")){
+      this.el("paymentStatus").className = "notice";
+      this.el("paymentStatus").innerHTML = "Nenhum pagamento registrado.";
+    }
+    this.toast("Pagamento limpo.");
+  };
+
+  const oldShow = App.show.bind(App);
+  App.show = function(id){
+    oldShow(id);
+    if(id === "pagamento"){
+      setTimeout(()=>this.insertPaymentMethods(), 50);
+    }
+  };
+
+  const oldInit = App.init.bind(App);
+  App.init = function(){
+    oldInit();
+    setTimeout(()=>this.insertPaymentMethods(), 300);
+  };
+})();
+</script>
+
+
+<script>
+/* JusProf Trabalhista — Configurações de cobrança.
+   Permite inserir/alterar dados de conta/recebedor, PIX e checkout de cartão.
+   Armazena localmente no navegador. Produção exige backend/gateway seguro.
+*/
+(function(){
+  if(window.__jusprofTrabConfiguracoesCobrancaV1) return;
+  window.__jusprofTrabConfiguracoesCobrancaV1 = true;
+
+  App.billingStorageKey = "jusprofTrabBillingConfig";
+
+  App.defaultBillingConfig = function(){
+    return {
+      recebedorNome: "",
+      recebedorDoc: "",
+      emailFinanceiro: "",
+      pixKey: "398429ee-8c62-4a59-8d83-f15ce0505ddd",
+      pixTipo: "Chave aleatória",
+      cidade: "PARACATU",
+      valorCalculo: 19.90,
+      descricao: "Cálculo Trabalhista JusProf",
+      whatsapp: "",
+      gateway: "Link de pagamento",
+      checkoutLink: "https://mpago.la/18cwbQL",
+      webhookUrl: "398429ee-8c62-4a59-8d83-f15ce0505ddd",
+      publicKey: "",
+      moeda: "BRL",
+      ambiente: "Teste"
+    };
+  };
+
+  App.getBillingConfig = function(){
+    try{
+      return {...this.defaultBillingConfig(), ...(JSON.parse(localStorage.getItem(this.billingStorageKey)||"{}"))};
+    }catch(e){
+      return this.defaultBillingConfig();
+    }
+  };
+
+  App.setCfgValue = function(id, value){
+    const el = this.el(id);
+    if(el) el.value = value ?? "";
+  };
+
+  App.loadBillingConfig = function(){
+    const c = this.getBillingConfig();
+    this.setCfgValue("cfgRecebedorNome", c.recebedorNome);
+    this.setCfgValue("cfgRecebedorDoc", c.recebedorDoc);
+    this.setCfgValue("cfgEmailFinanceiro", c.emailFinanceiro);
+    this.setCfgValue("cfgPixKey", c.pixKey);
+    this.setCfgValue("cfgPixTipo", c.pixTipo);
+    this.setCfgValue("cfgCidade", c.cidade);
+    this.setCfgValue("cfgValorCalculo", c.valorCalculo);
+    this.setCfgValue("cfgDescricao", c.descricao);
+    this.setCfgValue("cfgWhatsapp", c.whatsapp);
+    this.setCfgValue("cfgGateway", c.gateway);
+    this.setCfgValue("cfgCheckoutLink", c.checkoutLink);
+    this.setCfgValue("cfgWebhookUrl", c.webhookUrl);
+    this.setCfgValue("cfgPublicKey", c.publicKey);
+    this.setCfgValue("cfgMoeda", c.moeda);
+    this.setCfgValue("cfgAmbiente", c.ambiente);
+
+    if(this.el("cfgStatus")){
+      this.el("cfgStatus").className = "notice info";
+      this.el("cfgStatus").innerHTML = "Configurações carregadas.";
+    }
+    return c;
+  };
+
+  App.readBillingConfigForm = function(){
+    return {
+      recebedorNome: this.el("cfgRecebedorNome")?.value.trim() || "",
+      recebedorDoc: this.el("cfgRecebedorDoc")?.value.trim() || "",
+      emailFinanceiro: this.el("cfgEmailFinanceiro")?.value.trim() || "",
+      pixKey: this.el("cfgPixKey")?.value.trim() || "398429ee-8c62-4a59-8d83-f15ce0505ddd",
+      pixTipo: this.el("cfgPixTipo")?.value || "CPF",
+      cidade: this.el("cfgCidade")?.value.trim() || "PARACATU",
+      valorCalculo: this.num(this.el("cfgValorCalculo")?.value) || 19.90,
+      descricao: this.el("cfgDescricao")?.value.trim() || "Cálculo Trabalhista JusProf",
+      whatsapp: this.el("cfgWhatsapp")?.value.trim() || "",
+      gateway: this.el("cfgGateway")?.value || "Link de pagamento",
+      checkoutLink: this.el("cfgCheckoutLink")?.value.trim() || "",
+      webhookUrl: this.el("cfgWebhookUrl")?.value.trim() || "",
+      publicKey: this.el("cfgPublicKey")?.value.trim() || "",
+      moeda: this.el("cfgMoeda")?.value || "BRL",
+      ambiente: this.el("cfgAmbiente")?.value || "Teste"
+    };
+  };
+
+  App.saveBillingConfig = function(){
+    const c = this.readBillingConfigForm();
+    localStorage.setItem(this.billingStorageKey, JSON.stringify(c));
+    this.valorCalculo = c.valorCalculo;
+    this.applyBillingConfigToPayment();
+
+    if(this.el("cfgStatus")){
+      this.el("cfgStatus").className = "notice ok";
+      this.el("cfgStatus").innerHTML =
+        `<strong>Configurações salvas.</strong><br>`+
+        `Recebedor: ${this.esc(c.recebedorNome || "não informado")}<br>`+
+        `PIX: ${this.esc(c.pixKey)}<br>`+
+        `Valor por cálculo: ${this.money(c.valorCalculo)}<br>`+
+        `Cartão/gateway: ${this.esc(c.gateway)} ${c.checkoutLink ? "— link cadastrado" : ""}`;
+    }
+    this.toast("Configurações de cobrança salvas.");
+  };
+
+  App.clearBillingConfig = function(){
+    localStorage.removeItem(this.billingStorageKey);
+    const c = this.defaultBillingConfig();
+    localStorage.setItem(this.billingStorageKey, JSON.stringify(c));
+    this.loadBillingConfig();
+    this.applyBillingConfigToPayment();
+    if(this.el("cfgStatus")){
+      this.el("cfgStatus").className = "notice";
+      this.el("cfgStatus").innerHTML = "Configurações limpas e padrão restaurado.";
+    }
+    this.toast("Configurações limpas.");
+  };
+
+  App.applyBillingConfigToPayment = function(){
+    const c = this.getBillingConfig();
+    this.valorCalculo = c.valorCalculo || 19.90;
+
+    if(this.el("pixKey")) this.el("pixKey").value = c.pixKey || "398429ee-8c62-4a59-8d83-f15ce0505ddd";
+    if(this.el("pixValue")) this.el("pixValue").value = Number(this.valorCalculo).toFixed(2);
+    if(this.el("payName") && !this.el("payName").value && c.recebedorNome) {
+      // Não preencher pagador com recebedor. Mantém vazio.
+    }
+
+    const priceStrong = document.querySelector("#pagamento .metric.hot strong");
+    if(priceStrong) priceStrong.textContent = this.money(this.valorCalculo);
+
+    if(this.el("paymentStatus")){
+      this.el("paymentStatus").className = "notice info";
+      this.el("paymentStatus").innerHTML =
+        `<strong>Dados de cobrança configurados.</strong><br>`+
+        `Recebedor: ${this.esc(c.recebedorNome || "não informado")}<br>`+
+        `PIX: ${this.esc(c.pixKey || "não informado")}<br>`+
+        `Valor: ${this.money(this.valorCalculo)}<br>`+
+        `Cartão: ${c.checkoutLink ? `<a href="${this.esc(c.checkoutLink)}" target="_blank">abrir checkout/link de pagamento</a>` : "link não cadastrado"}`;
+    }
+
+    if(typeof this.generatePixTest === "function") this.generatePixTest();
+  };
+
+  const oldGeneratePixTest = App.generatePixTest ? App.generatePixTest.bind(App) : null;
+  if(oldGeneratePixTest){
+    App.generatePixTest = function(){
+      const c = this.getBillingConfig();
+      const value = this.num(this.el("pixValue") ? this.el("pixValue").value : c.valorCalculo) || c.valorCalculo || 19.90;
+      const key = this.el("pixKey") ? this.el("pixKey").value : (c.pixKey || "398429ee-8c62-4a59-8d83-f15ce0505ddd");
+      const name = this.el("payName") ? this.el("payName").value : "";
+      const pseudo = `PIX | ${c.descricao || "JusProf Trabalhista"} | Valor: ${this.money(value)} | Chave: ${key} | Recebedor: ${c.recebedorNome || "não informado"} | Cidade: ${c.cidade || "não informada"} | Pagador: ${name || "não informado"}`;
+      if(this.el("pixCopyPaste")) this.el("pixCopyPaste").value = pseudo;
+      return pseudo;
+    };
+  }
+
+  const oldSimulatePayment = App.simulatePayment ? App.simulatePayment.bind(App) : null;
+  if(oldSimulatePayment){
+    App.simulatePayment = function(){
+      const c = this.getBillingConfig();
+      const method = this.el("payMethod") ? this.el("payMethod").value : "pix";
+      if(method === "cartao" && c.checkoutLink){
+        if(this.el("paymentStatus")){
+          this.el("paymentStatus").className = "notice ok";
+          this.el("paymentStatus").innerHTML =
+            `<strong>Checkout de cartão configurado.</strong><br>`+
+            `Valor: ${this.money(c.valorCalculo)}<br>`+
+            `<a href="${this.esc(c.checkoutLink)}" target="_blank">Abrir link de pagamento</a><br>`+
+            `<small>Guarde o comprovante do pagamento.</small>`;
+        }
+        this.toast("Link de cartão disponível.");
+        return;
+      }
+      oldSimulatePayment();
+    };
+  }
+
+  const oldShowCfg = App.show.bind(App);
+  App.show = function(id){
+    oldShowCfg(id);
+    if(id === "configuracoes"){
+      setTimeout(()=>this.loadBillingConfig(), 50);
+    }
+    if(id === "pagamento"){
+      setTimeout(()=>this.applyBillingConfigToPayment(), 100);
+    }
+  };
+
+  const oldInitCfg = App.init.bind(App);
+  App.init = function(){
+    oldInitCfg();
+    setTimeout(()=>{
+      this.loadBillingConfig();
+      this.applyBillingConfigToPayment();
+    }, 650);
+  };
+})();
+</script>
+
+
+<script>
+/* JusProf Trabalhista — Cadastro obrigatório do usuário */
+(function(){
+  if(window.__jusprofCadastroObrigatorioV1) return;
+  window.__jusprofCadastroObrigatorioV1 = true;
+
+  App.requiredRegistrationKey = "jusprofRequiredRegistration";
+
+  App.getRequiredRegistration = function(){
+    try{
+      return JSON.parse(localStorage.getItem(this.requiredRegistrationKey)||"null");
+    }catch(e){
+      return null;
+    }
+  };
+
+  App.validateRequiredRegistration = function(){
+    const data = this.getRequiredRegistration();
+
+    if(!data) return false;
+
+    return !!(
+      data.nome &&
+      data.email &&
+      data.documento &&
+      data.telefone
+    );
+  };
+
+  App.readRequiredRegistrationForm = function(){
+    return {
+      nome: this.el("cadNome")?.value.trim() || "",
+      email: this.el("cadEmail")?.value.trim() || "",
+      documento: this.el("cadDocumento")?.value.trim() || "",
+      telefone: this.el("cadTelefone")?.value.trim() || "",
+      categoria: this.el("cadCategoria")?.value || "",
+      oab: this.el("cadOab")?.value.trim() || "",
+      observacoes: this.el("cadObs")?.value.trim() || "",
+      dataCadastro: new Date().toISOString()
+    };
+  };
+
+  App.saveRequiredRegistration = function(){
+    const data = this.readRequiredRegistrationForm();
+
+    if(!data.nome || !data.email || !data.documento || !data.telefone){
+      this.toast("Preencha os dados obrigatórios.");
+      return;
+    }
+
+    localStorage.setItem(this.requiredRegistrationKey, JSON.stringify(data));
+
+    if(this.el("cadStatus")){
+      this.el("cadStatus").className = "notice ok";
+      this.el("cadStatus").innerHTML =
+        `<strong>Cadastro salvo.</strong><br>`+
+        `Usuário: ${this.esc(data.nome)}<br>`+
+        `Documento: ${this.esc(data.documento)}<br>`+
+        `Categoria: ${this.esc(data.categoria)}`;
+    }
+
+    this.toast("Cadastro obrigatório salvo.");
+  };
+
+  App.loadRequiredRegistration = function(){
+    const data = this.getRequiredRegistration();
+
+    if(!data){
+      this.toast("Nenhum cadastro salvo.");
+      return;
+    }
+
+    const set = (id,val)=>{
+      const el=this.el(id);
+      if(el) el.value = val || "";
+    };
+
+    set("cadNome", data.nome);
+    set("cadEmail", data.email);
+    set("cadDocumento", data.documento);
+    set("cadTelefone", data.telefone);
+    set("cadCategoria", data.categoria);
+    set("cadOab", data.oab);
+    set("cadObs", data.observacoes);
+
+    if(this.el("cadStatus")){
+      this.el("cadStatus").className = "notice ok";
+      this.el("cadStatus").innerHTML =
+        `<strong>Cadastro carregado.</strong><br>`+
+        `Usuário: ${this.esc(data.nome)}<br>`+
+        `E-mail: ${this.esc(data.email)}`;
+    }
+
+    return data;
+  };
+
+  App.clearRequiredRegistration = function(){
+    localStorage.removeItem(this.requiredRegistrationKey);
+
+    ["cadNome","cadEmail","cadDocumento","cadTelefone","cadOab","cadObs"].forEach(id=>{
+      const el=this.el(id);
+      if(el) el.value="";
+    });
+
+    if(this.el("cadStatus")){
+      this.el("cadStatus").className = "notice";
+      this.el("cadStatus").innerHTML = "Nenhum cadastro obrigatório salvo.";
+    }
+
+    this.toast("Cadastro excluído.");
+  };
+
+  // Bloqueia cálculos sem cadastro obrigatório
+  const oldCalcRescisao = App.calcRescisao.bind(App);
+
+  App.calcRescisao = function(){
+    if(!this.validateRequiredRegistration()){
+      this.show("cadastro");
+      this.toast("Preencha o cadastro obrigatório antes de calcular.");
+      return;
+    }
+
+    return oldCalcRescisao();
+  };
+
+  // Bloqueia leitura sem cadastro
+  const oldReadDocs = App.readDocs.bind(App);
+
+  App.readDocs = async function(){
+    if(!this.validateRequiredRegistration()){
+      this.show("cadastro");
+      this.toast("Cadastro obrigatório necessário.");
+      return;
+    }
+
+    return await oldReadDocs();
+  };
+
+  const oldInitCadastro = App.init.bind(App);
+
+  App.init = function(){
+    oldInitCadastro();
+
+    setTimeout(()=>{
+      this.loadRequiredRegistration();
+
+      if(!this.validateRequiredRegistration()){
+        this.show("cadastro");
+      }
+    }, 500);
+  };
+})();
+</script>
+
+
+<script>
+/* JusProf Trabalhista — link Mercado Pago cadastrado para cartão crédito/débito */
+(function(){
+  if(window.__jusprofMercadoPagoLinkCadastradoV1) return;
+  window.__jusprofMercadoPagoLinkCadastradoV1 = true;
+
+  App.checkoutPadraoMercadoPago = "https://mpago.la/18cwbQL";
+  App.referenciaGatewayPadrao = "398429ee-8c62-4a59-8d83-f15ce0505ddd";
+
+  const oldDefaultBillingConfigMP = App.defaultBillingConfig ? App.defaultBillingConfig.bind(App) : null;
+  if(oldDefaultBillingConfigMP){
+    App.defaultBillingConfig = function(){
+      const c = oldDefaultBillingConfigMP();
+      c.checkoutLink = c.checkoutLink || this.checkoutPadraoMercadoPago;
+      c.webhookUrl = c.webhookUrl || this.referenciaGatewayPadrao;
+      c.gateway = c.gateway || "Mercado Pago";
+      return c;
+    };
+  }
+
+  const oldGetBillingConfigMP = App.getBillingConfig ? App.getBillingConfig.bind(App) : null;
+  if(oldGetBillingConfigMP){
+    App.getBillingConfig = function(){
+      const c = oldGetBillingConfigMP();
+      if(!c.checkoutLink) c.checkoutLink = this.checkoutPadraoMercadoPago;
+      if(!c.webhookUrl) c.webhookUrl = this.referenciaGatewayPadrao;
+      if(!c.gateway || c.gateway === "Link de pagamento") c.gateway = "Mercado Pago";
+      return c;
+    };
+  }
+
+  const oldLoadBillingConfigMP = App.loadBillingConfig ? App.loadBillingConfig.bind(App) : null;
+  if(oldLoadBillingConfigMP){
+    App.loadBillingConfig = function(){
+      const c = oldLoadBillingConfigMP();
+      if(this.el("cfgCheckoutLink")) this.el("cfgCheckoutLink").value = this.checkoutPadraoMercadoPago;
+      if(this.el("cfgWebhookUrl")) this.el("cfgWebhookUrl").value = this.referenciaGatewayPadrao;
+      if(this.el("cfgGateway")) this.el("cfgGateway").value = "Mercado Pago";
+      return this.getBillingConfig();
+    };
+  }
+
+  const oldApplyBillingConfigMP = App.applyBillingConfigToPayment ? App.applyBillingConfigToPayment.bind(App) : null;
+  if(oldApplyBillingConfigMP){
+    App.applyBillingConfigToPayment = function(){
+      oldApplyBillingConfigMP();
+      if(this.el("paymentStatus")){
+        const c = this.getBillingConfig();
+        this.el("paymentStatus").className = "notice info";
+        this.el("paymentStatus").innerHTML =
+          `<strong>Dados de cobrança configurados.</strong><br>`+
+          `PIX: ${this.esc(c.pixKey || "não informado")}<br>`+
+          `Valor: ${this.money(c.valorCalculo || 19.90)}<br>`+
+          `Cartão crédito/débito: <a href="${this.esc(c.checkoutLink || this.checkoutPadraoMercadoPago)}" target="_blank">abrir checkout Mercado Pago</a><br>`+
+          `<small>Chave PIX aleatória: ${this.esc(c.webhookUrl || this.referenciaGatewayPadrao)}</small>`;
+      }
+    };
+  }
+
+  const oldSimulatePaymentMP = App.simulatePayment ? App.simulatePayment.bind(App) : null;
+  if(oldSimulatePaymentMP){
+    App.simulatePayment = function(){
+      const method = this.el("payMethod") ? this.el("payMethod").value : "pix";
+      if(method === "cartao"){
+        const c = this.getBillingConfig();
+        if(this.el("paymentStatus")){
+          this.el("paymentStatus").className = "notice ok";
+          this.el("paymentStatus").innerHTML =
+            `<strong>Checkout Mercado Pago pronto para pagamento.</strong><br>`+
+            `Valor: ${this.money(c.valorCalculo || 19.90)}<br>`+
+            `<a href="${this.esc(c.checkoutLink || this.checkoutPadraoMercadoPago)}" target="_blank">Abrir link de pagamento</a><br>`+
+            `<small>Após pagar, guarde o comprovante.</small>`;
+        }
+        this.toast("Link Mercado Pago pronto.");
+        return;
+      }
+      oldSimulatePaymentMP();
+    };
+  }
+
+  window.addEventListener("load",()=>setTimeout(()=>{
+    if(App.loadBillingConfig) App.loadBillingConfig();
+    if(App.applyBillingConfigToPayment) App.applyBillingConfigToPayment();
+  },900));
+})();
+</script>
+
+
+<script>
+/* JusProf Trabalhista — correção da chave PIX para chave aleatória */
+(function(){
+  if(window.__jusprofPixAleatoriaCorrigidaV1) return;
+  window.__jusprofPixAleatoriaCorrigidaV1 = true;
+
+  App.pixKeyCorreta = "398429ee-8c62-4a59-8d83-f15ce0505ddd";
+  App.checkoutPadraoMercadoPago = "https://mpago.la/18cwbQL";
+
+  App.fixPixKeyConfig = function(){
+    try {
+      const key = this.billingStorageKey || "jusprofTrabBillingConfig";
+      const cfg = JSON.parse(localStorage.getItem(key) || "{}");
+      cfg.pixKey = this.pixKeyCorreta;
+      cfg.pixTipo = "Chave aleatória";
+      cfg.checkoutLink = cfg.checkoutLink || this.checkoutPadraoMercadoPago;
+      cfg.gateway = cfg.gateway || "Mercado Pago";
+      localStorage.setItem(key, JSON.stringify(cfg));
+    } catch(e) {}
+
+    if(this.el("cfgPixKey")) this.el("cfgPixKey").value = this.pixKeyCorreta;
+    if(this.el("cfgPixTipo")) this.el("cfgPixTipo").value = "Chave aleatória";
+    if(this.el("pixKey")) this.el("pixKey").value = this.pixKeyCorreta;
+    if(this.el("cfgCheckoutLink") && !this.el("cfgCheckoutLink").value) this.el("cfgCheckoutLink").value = this.checkoutPadraoMercadoPago;
+
+    if(typeof this.generatePixTest === "function") this.generatePixTest();
+    if(typeof this.applyBillingConfigToPayment === "function") this.applyBillingConfigToPayment();
+  };
+
+  const oldGetBillingConfigPix = App.getBillingConfig ? App.getBillingConfig.bind(App) : null;
+  if(oldGetBillingConfigPix){
+    App.getBillingConfig = function(){
+      const c = oldGetBillingConfigPix();
+      c.pixKey = this.pixKeyCorreta;
+      c.pixTipo = "Chave aleatória";
+      c.checkoutLink = c.checkoutLink || this.checkoutPadraoMercadoPago;
+      return c;
+    };
+  }
+
+  const oldLoadBillingConfigPix = App.loadBillingConfig ? App.loadBillingConfig.bind(App) : null;
+  if(oldLoadBillingConfigPix){
+    App.loadBillingConfig = function(){
+      const c = oldLoadBillingConfigPix();
+      this.fixPixKeyConfig();
+      return this.getBillingConfig ? this.getBillingConfig() : c;
+    };
+  }
+
+  window.addEventListener("load",()=>setTimeout(()=>App.fixPixKeyConfig(),1000));
+})();
+</script>
+
+
+<script>
+/* JusProf Trabalhista — cadastro simplificado e aviso de não armazenamento de cálculos */
+(function(){
+  if(window.__jusprofCadastroSimplificadoSemSalvarCalculosV1) return;
+  window.__jusprofCadastroSimplificadoSemSalvarCalculosV1 = true;
+
+  App.readRequiredRegistrationForm = function(){
+    return {
+      nome: this.el("cadNome")?.value.trim() || "",
+      email: this.el("cadEmail")?.value.trim() || "",
+      telefone: this.el("cadTelefone")?.value.trim() || "",
+      dataCadastro: new Date().toISOString()
+    };
+  };
+
+  App.validateRequiredRegistration = function(){
+    const data = this.getRequiredRegistration ? this.getRequiredRegistration() : null;
+    return !!(data && data.nome && data.email && data.telefone);
+  };
+
+  App.saveRequiredRegistration = function(){
+    const data = this.readRequiredRegistrationForm();
+
+    if(!data.nome || !data.email || !data.telefone){
+      this.toast("Preencha nome e e-mail.");
+      return;
+    }
+
+    localStorage.setItem(this.requiredRegistrationKey || "jusprofRequiredRegistration", JSON.stringify(data));
+
+    if(this.el("cadStatus")){
+      this.el("cadStatus").className = "notice ok";
+      this.el("cadStatus").innerHTML =
+        `<strong>Cadastro salvo.</strong><br>`+
+        `Usuário: ${this.esc(data.nome)}<br>`+
+        `E-mail: ${this.esc(data.email)}<br>`+
+        `E-mail: ${this.esc(data.telefone)}<br>`+
+        `<small>Os cálculos não ficam salvos automaticamente. Exporte em PDF/Excel para guardar.</small>`;
+    }
+
+    this.toast("Cadastro salvo.");
+  };
+
+  App.loadRequiredRegistration = function(){
+    let data = null;
+    try{
+      data = JSON.parse(localStorage.getItem(this.requiredRegistrationKey || "jusprofRequiredRegistration") || "null");
+    }catch(e){ data = null; }
+
+    if(!data){
+      if(this.el("cadStatus")){
+        this.el("cadStatus").className = "notice";
+        this.el("cadStatus").innerHTML = "Nenhum cadastro salvo.";
+      }
+      return null;
+    }
+
+    const set = (id,val)=>{
+      const el=this.el(id);
+      if(el) el.value = val || "";
+    };
+
+    set("cadNome", data.nome);
+    set("cadEmail", data.email);
+    set("cadTelefone", data.telefone);
+
+    if(this.el("cadStatus")){
+      this.el("cadStatus").className = "notice ok";
+      this.el("cadStatus").innerHTML =
+        `<strong>Cadastro carregado.</strong><br>`+
+        `Usuário: ${this.esc(data.nome)}<br>`+
+        `E-mail: ${this.esc(data.email)}<br>`+
+        `<small>Os cálculos não ficam salvos automaticamente no sistema.</small>`;
+    }
+
+    return data;
+  };
+
+  App.clearRequiredRegistration = function(){
+    localStorage.removeItem(this.requiredRegistrationKey || "jusprofRequiredRegistration");
+
+    ["cadNome","cadEmail","cadTelefone"].forEach(id=>{
+      const el=this.el(id);
+      if(el) el.value="";
+    });
+
+    if(this.el("cadStatus")){
+      this.el("cadStatus").className = "notice";
+      this.el("cadStatus").innerHTML = "Nenhum cadastro salvo.";
+    }
+
+    this.toast("Cadastro excluído.");
+  };
+
+  const oldCalcRescisaoSemSalvar = App.calcRescisao ? App.calcRescisao.bind(App) : null;
+  if(oldCalcRescisaoSemSalvar){
+    App.calcRescisao = function(){
+      const result = oldCalcRescisaoSemSalvar();
+      if(this.state && this.state.memory){
+        this.state.memory += "\n\nAVISO DE ARMAZENAMENTO:\nOs cálculos não ficam salvos automaticamente no sistema. Para guardar, exporte em PDF/Excel ou copie a memória de cálculo.";
+        if(this.el("memoryBox")) this.el("memoryBox").textContent = this.state.memory;
+      }
+      return result;
+    };
+  }
+})();
+</script>
+
+
+<script>
+/* JusProf Trabalhista — cadastro mínimo sem telefone */
+(function(){
+  if(window.__jusprofCadastroSemTelefoneV1) return;
+  window.__jusprofCadastroSemTelefoneV1 = true;
+
+  App.readRequiredRegistrationForm = function(){
+    return {
+      nome: this.el("cadNome")?.value.trim() || "",
+      email: this.el("cadEmail")?.value.trim() || "",
+      dataCadastro: new Date().toISOString()
+    };
+  };
+
+  App.validateRequiredRegistration = function(){
+    const data = this.getRequiredRegistration ? this.getRequiredRegistration() : null;
+    return !!(data && data.nome && data.email);
+  };
+
+  App.saveRequiredRegistration = function(){
+    const data = this.readRequiredRegistrationForm();
+
+    if(!data.nome || !data.email){
+      this.toast("Preencha nome e e-mail.");
+      return;
+    }
+
+    localStorage.setItem(this.requiredRegistrationKey || "jusprofRequiredRegistration", JSON.stringify(data));
+
+    if(this.el("cadStatus")){
+      this.el("cadStatus").className = "notice ok";
+      this.el("cadStatus").innerHTML =
+        `<strong>Cadastro salvo.</strong><br>`+
+        `Usuário: ${this.esc(data.nome)}<br>`+
+        `E-mail: ${this.esc(data.email)}<br>`+
+        `<small>Os cálculos não ficam salvos automaticamente. Exporte em PDF/Excel para guardar.</small>`;
+    }
+
+    this.toast("Cadastro salvo.");
+  };
+
+  App.loadRequiredRegistration = function(){
+    let data = null;
+    try{
+      data = JSON.parse(localStorage.getItem(this.requiredRegistrationKey || "jusprofRequiredRegistration") || "null");
+    }catch(e){ data = null; }
+
+    if(!data){
+      if(this.el("cadStatus")){
+        this.el("cadStatus").className = "notice";
+        this.el("cadStatus").innerHTML = "Nenhum cadastro salvo.";
+      }
+      return null;
+    }
+
+    const set = (id,val)=>{
+      const el=this.el(id);
+      if(el) el.value = val || "";
+    };
+
+    set("cadNome", data.nome);
+    set("cadEmail", data.email);
+
+    if(this.el("cadStatus")){
+      this.el("cadStatus").className = "notice ok";
+      this.el("cadStatus").innerHTML =
+        `<strong>Cadastro carregado.</strong><br>`+
+        `Usuário: ${this.esc(data.nome)}<br>`+
+        `E-mail: ${this.esc(data.email)}<br>`+
+        `<small>Os cálculos não ficam salvos automaticamente no sistema.</small>`;
+    }
+
+    return data;
+  };
+
+  App.clearRequiredRegistration = function(){
+    localStorage.removeItem(this.requiredRegistrationKey || "jusprofRequiredRegistration");
+
+    ["cadNome","cadEmail"].forEach(id=>{
+      const el=this.el(id);
+      if(el) el.value="";
+    });
+
+    if(this.el("cadStatus")){
+      this.el("cadStatus").className = "notice";
+      this.el("cadStatus").innerHTML = "Nenhum cadastro salvo.";
+    }
+
+    this.toast("Cadastro excluído.");
+  };
+})();
+</script>
+
+
+<script>
+/* JusProf Trabalhista — CTPS último vínculo + termo de responsabilidade no relatório.
+   Ajuste cirúrgico:
+   1) quando houver CTPS, tenta puxar o último vínculo trabalhista;
+   2) mantém possibilidade de inserção manual;
+   3) relatório informa que os cálculos foram feitos com base nas informações inseridas/conferidas pelo usuário, sob sua responsabilidade.
+*/
+(function(){
+  if(window.__jusprofTrabCtpUltimoVinculoResponsabilidadeV1) return;
+  window.__jusprofTrabCtpUltimoVinculoResponsabilidadeV1 = true;
+
+  App.dateBRToISO = function(s){
+    const m = String(s||"").match(/\b(\d{2})\/(\d{2})\/(\d{4})\b/);
+    if(!m) return "";
+    return `${m[3]}-${m[2]}-${m[1]}`;
+  };
+
+  App.isoToDateObj = function(iso){
+    if(!iso) return null;
+    const d = new Date(iso + "T00:00:00");
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  App.extractCurrencyFromText = function(text){
+    const m = String(text||"").match(/(?:R\$\s*)?\d{1,3}(?:\.\d{3})*,\d{2}|(?:R\$\s*)?\d+,\d{2}/);
+    return m ? this.num(m[0]) : 0;
+  };
+
+  App.extractEmployerFromWindow = function(win){
+    const clean = String(win||"").replace(/\s+/g," ").trim();
+
+    const patterns = [
+      /(?:empregador|empresa|raz[aã]o\s+social|contratante|nome\s+empresarial)\s*[:\-]?\s*([A-ZÁÉÍÓÚÂÊÔÃÕÇ0-9][A-ZÁÉÍÓÚÂÊÔÃÕÇa-záéíóúâêôãõç0-9\s\.\-&\/]{4,120})/i,
+      /(?:CNPJ|CPF)\s*[:\-]?\s*[\d\.\-\/]+\s+([A-ZÁÉÍÓÚÂÊÔÃÕÇ0-9][A-ZÁÉÍÓÚÂÊÔÃÕÇa-záéíóúâêôãõç0-9\s\.\-&\/]{4,120})/i
+    ];
+
+    for(const p of patterns){
+      const m = clean.match(p);
+      if(m && m[1]){
+        let name = m[1]
+          .replace(/\b(admiss[aã]o|data|cargo|sal[aá]rio|remunera[cç][aã]o|sa[ií]da|baixa|rescis[aã]o)\b.*$/i,"")
+          .replace(/[;|]+$/g,"")
+          .trim();
+        if(name.length >= 4) return name;
+      }
+    }
+
+    // fallback: pega uma linha em caixa alta próxima de "CTPS/Contrato"
+    const lines = String(win||"").split(/\n+/).map(x=>x.trim()).filter(Boolean);
+    for(const line of lines){
+      const n = line.replace(/\s+/g," ").trim();
+      if(n.length >= 6 && n.length <= 90 && /[A-ZÁÉÍÓÚÂÊÔÃÕÇ]{3,}/.test(n) && !/(CTPS|CARTEIRA|CONTRATO|DATA|ADMISS|SA[IÍ]DA|CARGO|SAL[AÁ]RIO|REMUNERA)/i.test(n)){
+        return n;
+      }
+    }
+
+    return "";
+  };
+
+  App.extractLastCTPSLink = function(text){
+    const raw = String(text||"");
+    const clean = raw.replace(/\r/g,"\n");
+    const norm = this.norm(clean);
+
+    // Executa mesmo sem "CTPS", mas dá prioridade se houver indícios de carteira/contrato.
+    const isCTPSLike = /ctps|carteira de trabalho|contrato de trabalho|data de admissao|data de admissão|empregador|cbo|cargo|remuneracao|remuneração/i.test(clean);
+
+    const dateRegex = /\b\d{2}\/\d{2}\/\d{4}\b/g;
+    const dates = [];
+    let m;
+
+    while((m = dateRegex.exec(clean))){
+      const dateBR = m[0];
+      const iso = this.dateBRToISO(dateBR);
+      if(!iso) continue;
+
+      const start = Math.max(0, m.index - 700);
+      const end = Math.min(clean.length, m.index + 1200);
+      const win = clean.slice(start,end);
+      const wnorm = this.norm(win);
+
+      let score = isCTPSLike ? 20 : 0;
+
+      if(/admissao|admissão|admitido|inicio do contrato|início do contrato|data inicial|contrato de trabalho/.test(wnorm)) score += 120;
+      if(/empregador|empresa|razao social|razão social|cnpj|cargo|cbo|salario|salário|remuneracao|remuneração/.test(wnorm)) score += 80;
+      if(/nascimento|expedicao|expedição|emissao|emissão|identidade|titulo de eleitor|título de eleitor|certidao|certidão/.test(wnorm)) score -= 120;
+
+      // Procura saída/baixa/rescisão na mesma janela.
+      let saida = "";
+      const saidaMatch = win.match(/(?:sa[ií]da|baixa|rescis[aã]o|desligamento|dispensa|data\s+de\s+sa[ií]da|t[eé]rmino)\D{0,80}(\d{2}\/\d{2}\/\d{4})/i);
+      if(saidaMatch) saida = this.dateBRToISO(saidaMatch[1]);
+
+      // Se houver duas datas próximas e a segunda vier depois, pode ser admissão/saída.
+      if(!saida){
+        const allDates = [...win.matchAll(/\b\d{2}\/\d{2}\/\d{4}\b/g)].map(x=>this.dateBRToISO(x[0])).filter(Boolean).sort();
+        const later = allDates.find(d=>d > iso);
+        if(later && /sa[ií]da|baixa|rescis[aã]o|desligamento|dispensa|t[eé]rmino/i.test(win)) saida = later;
+      }
+
+      const salarioWin = win.match(/(?:sal[aá]rio|remunera[cç][aã]o|remuneracao|valor)\D{0,120}((?:R\$\s*)?\d{1,3}(?:\.\d{3})*,\d{2}|(?:R\$\s*)?\d+,\d{2})/i);
+      const salario = salarioWin ? this.num(salarioWin[1]) : this.extractCurrencyFromText(win);
+
+      const empregador = this.extractEmployerFromWindow(win);
+
+      dates.push({
+        admissao: iso,
+        admissaoBR: dateBR,
+        saida,
+        empregador,
+        salario,
+        cargo: (win.match(/(?:cargo|fun[cç][aã]o)\s*[:\-]?\s*([A-ZÁÉÍÓÚÂÊÔÃÕÇa-záéíóúâêôãõç\s\.\-&]{3,80})/i)||[])[1] || "",
+        contexto: win.replace(/\s+/g," ").trim(),
+        score
+      });
+    }
+
+    const candidates = dates
+      .filter(x => x.score > 0)
+      .sort((a,b)=>{
+        const da = this.isoToDateObj(a.admissao)?.getTime() || 0;
+        const db = this.isoToDateObj(b.admissao)?.getTime() || 0;
+        if(db !== da) return db - da;
+        return b.score - a.score;
+      });
+
+    return candidates[0] || null;
+  };
+
+  const oldExtractGeneralCTPS = App.extractGeneral ? App.extractGeneral.bind(App) : null;
+  if(oldExtractGeneralCTPS){
+    App.extractGeneral = function(text){
+      const base = oldExtractGeneralCTPS(text);
+      const vinculo = this.extractLastCTPSLink(text);
+
+      if(vinculo){
+        if(this.el("gAdmissao")) this.el("gAdmissao").value = vinculo.admissao || this.el("gAdmissao").value;
+        if(this.el("gSaida") && vinculo.saida) this.el("gSaida").value = vinculo.saida;
+        if(this.el("gSalario") && vinculo.salario) this.el("gSalario").value = vinculo.salario;
+        if(this.el("gReu") && vinculo.empregador) this.el("gReu").value = vinculo.empregador;
+
+        const notice = this.el("extractNotice");
+        if(notice){
+          notice.className = "notice ok";
+          notice.innerHTML +=
+            `<hr style="border:0;border-top:1px solid rgba(30,58,138,.25);margin:10px 0">`+
+            `<strong>CTPS — último vínculo localizado:</strong><br>`+
+            `Empregador: <strong>${this.esc(vinculo.empregador || "não localizado")}</strong><br>`+
+            `Admissão: <strong>${this.esc(vinculo.admissao || "não localizada")}</strong><br>`+
+            `Saída/baixa: <strong>${this.esc(vinculo.saida || "não localizada; preencher manualmente se necessário")}</strong><br>`+
+            `Salário/remuneração: <strong>${vinculo.salario ? this.money(vinculo.salario) : "não localizado; preencher manualmente se necessário"}</strong><br>`+
+            `<details style="margin-top:8px"><summary>Ver trecho da CTPS usado</summary><pre class="memory">${this.esc(vinculo.contexto)}</pre></details>`;
+        }
+
+        return {
+          ...base,
+          ctpsUltimoVinculo: vinculo,
+          admissao: vinculo.admissao || base.admissao,
+          saida: vinculo.saida || base.saida,
+          salario: vinculo.salario || base.salario,
+          reu: vinculo.empregador || base.reu
+        };
+      }
+
+      return base;
+    };
+  }
+
+  const oldApplyExtractedToRescisaoCTPS = App.applyExtractedToRescisao ? App.applyExtractedToRescisao.bind(App) : null;
+  if(oldApplyExtractedToRescisaoCTPS){
+    App.applyExtractedToRescisao = function(){
+      const d = this.extractGeneral(this.el("generalText").value || "");
+      if(d.autor && this.el("empregado")) this.el("empregado").value = d.autor;
+      if(d.reu && this.el("empregador")) this.el("empregador").value = d.reu;
+      if(d.salario && this.el("salario")) this.el("salario").value = d.salario;
+      if(d.admissao && this.el("admissao")) this.el("admissao").value = d.admissao;
+      if(d.saida && this.el("saida")) this.el("saida").value = d.saida;
+      this.show("rescisao");
+      this.toast(d.ctpsUltimoVinculo ? "Último vínculo da CTPS aplicado. Confira os dados." : "Dados aplicados no cálculo.");
+    };
+  }
+
+  App.responsibilityDisclaimer = function(){
+    return "\n\nTERMO DE RESPONSABILIDADE DO USUÁRIO:\n" +
+      "Os cálculos foram elaborados com base nas informações, datas, valores, documentos e parâmetros inseridos, conferidos ou selecionados pelo usuário. " +
+      "A responsabilidade pela veracidade, suficiência, conferência e utilização das informações é integralmente do usuário. " +
+      "O sistema é ferramenta de apoio e não substitui a análise profissional do caso concreto.";
+  };
+
+  const oldCalcRescisaoResp = App.calcRescisao ? App.calcRescisao.bind(App) : null;
+  if(oldCalcRescisaoResp){
+    App.calcRescisao = function(){
+      const result = oldCalcRescisaoResp();
+      if(this.state && this.state.memory && !this.state.memory.includes("TERMO DE RESPONSABILIDADE DO USUÁRIO")){
+        this.state.memory += this.responsibilityDisclaimer();
+        if(this.el("memoryBox")) this.el("memoryBox").textContent = this.state.memory;
+      }
+      return result;
+    };
+  }
+
+  const oldExportPDFResp = App.exportPDF ? App.exportPDF.bind(App) : null;
+  if(oldExportPDFResp){
+    App.exportPDF = function(){
+      if(this.state && this.state.memory && !this.state.memory.includes("TERMO DE RESPONSABILIDADE DO USUÁRIO")){
+        this.state.memory += this.responsibilityDisclaimer();
+        if(this.el("memoryBox")) this.el("memoryBox").textContent = this.state.memory;
+      }
+      return oldExportPDFResp();
+    };
+  }
+
+  const oldExportExcelResp = App.exportExcel ? App.exportExcel.bind(App) : null;
+  if(oldExportExcelResp){
+    App.exportExcel = function(){
+      if(this.state && this.state.memory && !this.state.memory.includes("TERMO DE RESPONSABILIDADE DO USUÁRIO")){
+        this.state.memory += this.responsibilityDisclaimer();
+        if(this.el("memoryBox")) this.el("memoryBox").textContent = this.state.memory;
+      }
+      return oldExportExcelResp();
+    };
+  }
+})();
+</script>
+
+
+<script>
+/* JusProf Trabalhista — pagamento público sem pagamento */
+(function(){
+  if(window.__jusprofPagamentoPublicoSemTesteV2) return;
+  window.__jusprofPagamentoPublicoSemTesteV2 = true;
+
+  const oldApplyBillingPublico = App.applyBillingConfigToPayment ? App.applyBillingConfigToPayment.bind(App) : null;
+  if(oldApplyBillingPublico){
+    App.applyBillingConfigToPayment = function(){
+      oldApplyBillingPublico();
+      const c = this.getBillingConfig ? this.getBillingConfig() : {};
+      if(this.el("paymentStatus")){
+        this.el("paymentStatus").className = "notice info";
+        this.el("paymentStatus").innerHTML =
+          `<strong>Dados de cobrança configurados.</strong><br>`+
+          `PIX: ${this.esc(c.pixKey || "não informado")}<br>`+
+          `Valor: ${this.money(c.valorCalculo || 19.90)}<br>`+
+          `Cartão crédito/débito: <a href="${this.esc(c.checkoutLink || this.checkoutPadraoMercadoPago || "#")}" target="_blank">abrir checkout Mercado Pago</a><br>`+
+          `<small>Após o pagamento, guarde o comprovante.</small>`;
+      }
+    };
+  }
+
+  const oldSimulatePaymentPublico = App.simulatePayment ? App.simulatePayment.bind(App) : null;
+  if(oldSimulatePaymentPublico){
+    App.simulatePayment = function(){
+      const method = this.el("payMethod") ? this.el("payMethod").value : "pix";
+      const c = this.getBillingConfig ? this.getBillingConfig() : {};
+      if(method === "cartao"){
+        if(this.el("paymentStatus")){
+          this.el("paymentStatus").className = "notice ok";
+          this.el("paymentStatus").innerHTML =
+            `<strong>Checkout Mercado Pago pronto.</strong><br>`+
+            `Valor: ${this.money(c.valorCalculo || 19.90)}<br>`+
+            `<a href="${this.esc(c.checkoutLink || this.checkoutPadraoMercadoPago || "#")}" target="_blank">Abrir link de pagamento</a><br>`+
+            `<small>Após o pagamento, guarde o comprovante.</small>`;
+        }
+        this.toast("Link de pagamento disponível.");
+        return;
+      }
+
+      if(this.el("paymentStatus")){
+        this.el("paymentStatus").className = "notice ok";
+        this.el("paymentStatus").innerHTML =
+          `<strong>PIX disponível para pagamento.</strong><br>`+
+          `Valor: ${this.money(c.valorCalculo || 19.90)}<br>`+
+          `Chave PIX: ${this.esc(c.pixKey || "não informada")}<br>`+
+          `<small>Após o pagamento, guarde o comprovante.</small>`;
+      }
+      this.toast("Dados de pagamento exibidos.");
+    };
+  }
+
+  window.addEventListener("load",()=>setTimeout(()=>{
+    if(App.applyBillingConfigToPayment) App.applyBillingConfigToPayment();
+  },1000));
+})();
+</script>
+
+
+<script>
+/* JusProf Trabalhista — remover textos de teste da tela de pagamento */
+(function(){
+  if(window.__jusprofRemoverTestePagamentoV1) return;
+  window.__jusprofRemoverTestePagamentoV1 = true;
+
+  App.cleanPaymentTestWords = function(){
+    document.querySelectorAll("button, .notice, textarea, input, h2, h3, p, strong, span, div").forEach(el=>{
+      if(el.tagName === "SCRIPT" || el.tagName === "STYLE") return;
+      if(el.childNodes.length === 1 && el.childNodes[0].nodeType === Node.TEXT_NODE){
+        el.textContent = el.textContent
+          .replace(/Gerar PIX teste/gi, "Gerar PIX")
+          .replace(/Registrar pagamento teste/gi, "Registrar pagamento")
+          .replace(/Pagamento teste registrado/gi, "Pagamento registrado")
+          .replace(/PIX TESTE/gi, "PIX");
+      }
+      if((el.tagName === "TEXTAREA" || el.tagName === "INPUT") && el.value){
+        el.value = el.value
+          .replace(/PIX TESTE/gi, "PIX")
+          .replace(/teste/gi, "");
+      }
+    });
+  };
+
+  const oldGeneratePixNoTeste = App.generatePixTest ? App.generatePixTest.bind(App) : null;
+  if(oldGeneratePixNoTeste){
+    App.generatePixTest = function(){
+      const result = oldGeneratePixNoTeste();
+      if(this.el("pixCopyPaste")){
+        this.el("pixCopyPaste").value = this.el("pixCopyPaste").value
+          .replace(/PIX TESTE/gi, "PIX")
+          .replace(/teste/gi, "");
+      }
+      this.cleanPaymentTestWords();
+      return result;
+    };
+  }
+
+  const oldSimulatePaymentNoTeste = App.simulatePayment ? App.simulatePayment.bind(App) : null;
+  if(oldSimulatePaymentNoTeste){
+    App.simulatePayment = function(){
+      const result = oldSimulatePaymentNoTeste();
+      if(this.el("paymentStatus")){
+        this.el("paymentStatus").innerHTML = this.el("paymentStatus").innerHTML
+          .replace(/Pagamento teste registrado/gi, "Pagamento registrado")
+          .replace(/teste/gi, "");
+      }
+      this.cleanPaymentTestWords();
+      return result;
+    };
+  }
+
+  window.addEventListener("load",()=>setTimeout(()=>App.cleanPaymentTestWords(),900));
+})();
+</script>
+
+
+
+
+<script>
+/* JusProf Trabalhista — BLOQUEIO COM VERIFICAÇÃO AUTOMÁTICA VIA MERCADO PAGO
+   Fluxo: cliente paga PIX → MP envia webhook → Netlify Function confirma → frontend libera.
+   O token é salvo no localStorage e verificado a cada carregamento. */
+(function(){
+  if(window.__jusprofBloqueioMPv3) return;
+  window.__jusprofBloqueioMPv3 = true;
+
+  const ACCESS_KEY   = "jusprofTrabAccessLiberado";
+  const EMAIL_KEY    = "jusprofTrabPayerEmail";
+  const WEBHOOK_URL  = "/.netlify/functions/mp-webhook"; // Netlify Function
+  const BLOCKED      = new Set(["leitura","rescisao","manual","relatorio","metricas"]);
+
+  function $(id){ return document.getElementById(id); }
+
+  // ── Verifica acesso salvo no localStorage ──────────────────────────────
+  function hasAccess(){
+    try{
+      const d = JSON.parse(localStorage.getItem(ACCESS_KEY)||"null");
+      if(!d || d.status !== "liberado") return false;
+      // Token válido por 2 horas
+      const age = Date.now() - (d.ts || 0);
+      return age < 2 * 60 * 60 * 1000;
+    }catch(e){ return false; }
+  }
+
+  function saveAccess(pagador, valor){
+    localStorage.setItem(ACCESS_KEY, JSON.stringify({
+      status:"liberado", pagador, valor, ts: Date.now()
+    }));
+  }
+
+  function clearAccess(){
+    localStorage.removeItem(ACCESS_KEY);
+    localStorage.removeItem(EMAIL_KEY);
+  }
+
+  function notify(msg){
+    try{ if(window.App && App.toast) App.toast(msg); }catch(e){}
+  }
+
+  function goPayment(){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    const p = $('pagamento'); if(p) p.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+    setTimeout(()=>{ insertPanel(); applyLockVisual(); }, 50);
+  }
+
+  // ── Consulta Netlify Function para verificar pagamento ─────────────────
+  async function checkPaymentOnServer(email){
+    if(!email) return false;
+    try{
+      const res = await fetch(`${WEBHOOK_URL}?check=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if(data.liberado){
+        saveAccess(data.pagador || email, data.valor);
+        return true;
+      }
+    }catch(e){ console.warn("Erro ao verificar pagamento:", e); }
+    return false;
+  }
+
+  // ── Painel de pagamento ────────────────────────────────────────────────
+  function insertPanel(){
+    const p = $('pagamento'); if(!p || $('mpPayPanel')) return;
+    const div = document.createElement('div');
+    div.id = 'mpPayPanel';
+    div.className = 'card module-block';
+    div.innerHTML = `
+      <h3>Verificação de pagamento</h3>
+      <div class="notice ${hasAccess()?'ok':'danger'}" id="mpAccessStatus">
+        ${hasAccess()
+          ? '<strong>✓ Acesso liberado!</strong> Você pode usar todas as funções.'
+          : '<strong>Acesso bloqueado.</strong> Realize o pagamento via PIX e clique em "Verificar pagamento".'}
+      </div>
+
+      <div class="form" id="mpEmailGroup" style="${hasAccess()?'display:none':''}">
+        <label>E-mail usado no pagamento PIX
+          <input id="mpPayerEmail" type="email" placeholder="email@exemplo.com"
+            value="${localStorage.getItem(EMAIL_KEY)||''}">
+        </label>
+      </div>
+
+      <div class="actions" id="mpActions">
+        ${hasAccess()
+          ? `<button class="dangerbtn" onclick="App.mpClearAccess()">Revogar acesso</button>`
+          : `<button class="good" onclick="App.mpVerifyPayment()">✓ Verificar pagamento</button>
+             <button class="secondary" onclick="App.mpClearAccess()">Limpar</button>`
+        }
+      </div>
+
+      <div id="mpVerifyStatus" class="notice info" style="display:none"></div>
+    `;
+    p.appendChild(div);
+  }
+
+  function applyLockVisual(){
+    document.querySelectorAll('.nav').forEach(btn=>{
+      const id = btn.getAttribute('data-screen');
+      if(BLOCKED.has(id) && !hasAccess()){
+        btn.style.opacity = '0.45';
+        btn.title = 'Bloqueado até confirmação do pagamento';
+      }else{
+        btn.style.opacity = '';
+        btn.title = '';
+      }
+    });
+
+    BLOCKED.forEach(id=>{
+      const sec = $(id); if(!sec) return;
+      let banner = sec.querySelector('[data-mp-lock]');
+      if(!banner){
+        banner = document.createElement('div');
+        banner.setAttribute('data-mp-lock', id);
+        banner.className = 'notice danger';
+        banner.innerHTML = '<strong>Pagamento obrigatório.</strong> Realize o pagamento PIX e verifique em <b>Pagamento</b>.';
+        sec.insertAdjacentElement('afterbegin', banner);
+      }
+      banner.style.display = hasAccess() ? 'none' : 'block';
+
+      sec.querySelectorAll('input,select,textarea,button').forEach(x=>{
+        if(!hasAccess()){
+          x.setAttribute('disabled','disabled');
+          x.dataset.mpLocked = '1';
+        }else if(x.dataset.mpLocked === '1'){
+          x.removeAttribute('disabled');
+          delete x.dataset.mpLocked;
+        }
+      });
+    });
+
+    // Atualiza painel
+    const st = $('mpAccessStatus');
+    if(st){
+      st.className = 'notice ' + (hasAccess()?'ok':'danger');
+      st.innerHTML = hasAccess()
+        ? '<strong>✓ Acesso liberado!</strong> Você pode usar todas as funções.'
+        : '<strong>Acesso bloqueado.</strong> Realize o pagamento via PIX e clique em "Verificar pagamento".';
+    }
+    const eg = $('mpEmailGroup');
+    if(eg) eg.style.display = hasAccess() ? 'none' : '';
+    const ac = $('mpActions');
+    if(ac) ac.innerHTML = hasAccess()
+      ? `<button class="dangerbtn" onclick="App.mpClearAccess()">Revogar acesso</button>`
+      : `<button class="good" onclick="App.mpVerifyPayment()">✓ Verificar pagamento</button>
+         <button class="secondary" onclick="App.mpClearAccess()">Limpar</button>`;
+  }
+
+  // ── Funções públicas expostas no App ───────────────────────────────────
+  function patchApp(){
+    if(!window.App) return;
+
+    App.hasPaidAccess = hasAccess;
+
+    // Verificar pagamento ao clicar no botão
+    App.mpVerifyPayment = async function(){
+      const emailEl = $('mpPayerEmail');
+      const email = (emailEl ? emailEl.value : '').trim();
+      if(!email){ notify('Informe o e-mail usado no pagamento.'); return; }
+      localStorage.setItem(EMAIL_KEY, email);
+
+      const statusEl = $('mpVerifyStatus');
+      if(statusEl){ statusEl.style.display='block'; statusEl.className='notice info'; statusEl.textContent='Verificando pagamento...'; }
+      notify('Verificando pagamento...');
+
+      const ok = await checkPaymentOnServer(email);
+      if(ok){
+        notify('✓ Pagamento confirmado! Acesso liberado.');
+        if(statusEl){ statusEl.className='notice ok'; statusEl.textContent='✓ Pagamento confirmado! Todas as funções liberadas.'; }
+        applyLockVisual();
+      }else{
+        notify('Pagamento ainda não confirmado. Aguarde alguns instantes e tente novamente.');
+        if(statusEl){ statusEl.className='notice danger'; statusEl.textContent='Pagamento não encontrado. Se já pagou, aguarde 1-2 minutos e tente novamente.'; }
+      }
+    };
+
+    App.mpClearAccess = function(){
+      clearAccess();
+      notify('Acesso revogado.');
+      applyLockVisual();
+    };
+
+    // Intercepta navegação para telas bloqueadas
+    const oldShow = App.show ? App.show.bind(App) : null;
+    App.show = function(id){
+      if(BLOCKED.has(id) && !hasAccess()){ goPayment(); notify('Área bloqueada. Realize o pagamento.'); return; }
+      const r = oldShow ? oldShow(id) : undefined;
+      setTimeout(()=>{ insertPanel(); applyLockVisual(); }, 50);
+      return r;
+    };
+
+    // Intercepta funções de cálculo
+    ['handleFiles','readDocs','applyExtractedToRescisao','sugerirProporcoes',
+     'calcRescisao','addManual','clearManual','exportPDF','exportExcel','copyMemory'
+    ].forEach(fn=>{
+      if(typeof App[fn]==='function' && !App[fn].__mpWrapped){
+        const old = App[fn].bind(App);
+        const wrapped = function(){
+          if(!hasAccess()){ goPayment(); notify('Pagamento obrigatório.'); return false; }
+          return old.apply(App, arguments);
+        };
+        wrapped.__mpWrapped = true;
+        App[fn] = wrapped;
+      }
+    });
+  }
+
+  // Intercepta cliques em áreas bloqueadas
+  document.addEventListener('click', function(ev){
+    if(hasAccess()) return;
+    const nav = ev.target.closest && ev.target.closest('.nav[data-screen]');
+    if(nav && BLOCKED.has(nav.getAttribute('data-screen'))){
+      ev.preventDefault(); ev.stopPropagation();
+      goPayment(); notify('Área bloqueada. Realize o pagamento.');
+    }
+  }, true);
+
+  window.addEventListener('load', function(){
+    setTimeout(()=>{ patchApp(); insertPanel(); applyLockVisual(); }, 150);
+    setInterval(()=>{ patchApp(); applyLockVisual(); }, 2000);
+
+    // Se tem e-mail salvo, verifica automaticamente em background
+    const savedEmail = localStorage.getItem(EMAIL_KEY);
+    if(savedEmail && !hasAccess()){
+      setTimeout(()=> checkPaymentOnServer(savedEmail).then(ok=>{
+        if(ok){ applyLockVisual(); notify('✓ Pagamento confirmado automaticamente!'); }
+      }), 1500);
+    }
+  });
+})();
+</script>
+</body></html>
