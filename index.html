@@ -14,7 +14,7 @@
 <div class="modal-bg" id="termsModal"><div class="modal"><h2>Termo de Responsabilidade, Uso e LGPD — JusProf Trabalhista</h2><p>Ferramenta de apoio para cálculo trabalhista/rescisório. O usuário deve conferir datas, salário-base, verbas, FGTS, abatimentos, parâmetros da sentença e resultados antes do uso.</p><div class="form"><label>Nome<input id="loginNome"></label><label>E-mail<input id="loginEmail"></label><label>OAB/Registro<input id="loginRegistro"></label><label>Categoria<select id="loginCategoria"><option>Trabalhista — cálculo por uso</option></select></label></div><div class="notice info"><strong>LGPD e armazenamento:</strong> nesta versão HTML, os dados básicos podem ficar apenas no navegador do próprio usuário. Os cálculos e documentos não ficam salvos automaticamente no sistema. Para guardar o resultado, o usuário deve baixar PDF/Excel ou copiar a memória de cálculo. Versão profissional exige backend seguro e política própria de retenção/exclusão.</div><label><input type="checkbox" id="acceptTerms" style="width:auto;margin-right:8px"> Li e aceito os termos.</label><div class="actions"><button class="primary" onclick="App.acceptTerms()">Aceitar e entrar</button></div></div></div>
 <div class="loader-bg" id="loader"><div class="loader"><div class="hourglass">⌛</div><h2>Processando</h2><p id="loaderStep" class="muted">Iniciando...</p><div class="bar"><span></span></div><p><strong>Tempo:</strong> <span id="loaderTime">0s</span></p></div></div>
 <div class="app"><aside><div class="brand"><div class="logo">§</div><div><h1>JusProf</h1><p class="sub">Trabalhista</p></div></div><nav><button class="nav active" data-screen="inicio">Início</button><button class="nav" data-screen="cadastro">Cadastro obrigatório</button>
-    <button class="nav" data-screen="pagamento">Pagamento</button><button class="nav" data-screen="leitura">Ler sentença/documento</button><button class="nav" data-screen="rescisao">Cálculo rescisório</button><button class="nav" data-screen="manual">Inserção manual</button><button class="nav" data-screen="relatorio">Relatório</button><button class="nav" data-screen="metricas">Métricas</button><button class="nav" data-screen="termos">Termos/LGPD</button></nav><div class="notice"><strong>Preço:</strong> R$ 19,90 por cálculo.</div></aside><main>
+    <button class="nav" data-screen="pagamento">Pagamento</button><button class="nav" data-screen="leitura">Ler sentença/documento</button><button class="nav" data-screen="rescisao">Cálculo rescisório</button><button class="nav" data-screen="manual">Inserção manual</button><button class="nav" data-screen="relatorio">Relatório</button><button class="nav" data-screen="metricas">Métricas</button><button class="nav" data-screen="termos">Termos/LGPD</button></nav><div class="notice"><strong>Planos:</strong> R$ 19,90, R$ 39,90 ou R$ 149,00.</div></aside><main>
 <section id="inicio" class="screen active"><div class="hero"><div><span class="badge">Trabalhista por cálculo</span><h2>JusProf Trabalhista funcional.</h2><p>Cálculo rescisório com leitura de sentença, inserção manual, saldo de salário, aviso prévio, férias, 1/3, 13º, FGTS e relatório.</p><div class="actions"><button class="primary" onclick="App.show('rescisao')">Fazer cálculo</button><button class="secondary" onclick="App.show('leitura')">Ler sentença</button></div></div><div class="grid"><div class="card dark"><h3>Manual e automático</h3><p>Lê documentos e permite inserir valores/datas manualmente.</p></div><div class="card dark"><h3>Manual</h3><p>Relatório com origem dos valores e memória de cálculo.</p></div></div></div></section>
 
 
@@ -54,7 +54,7 @@
   </div>
 </section>
 
-<section id="pagamento" class="screen"><div class="head"><h2>Pagamento por cálculo</h2><p>Cobrança avulsa, sem mensalidade. Escolha PIX ou cartão de crédito/débito.</p></div><div class="grid two"><div class="card"><h3>Cálculo trabalhista avulso</h3><div class="metric hot"><span>Valor</span><strong>R$ 19,90</strong></div></div></div></section>
+<section id="pagamento" class="screen"><div class="head"><h2>Pagamento por plano</h2><p>Escolha o plano desejado e pague por PIX QR Code, PIX chave aleatória manual ou cartão.</p></div><div class="grid three" id="jpInitialPlans"><div class="card"><span class="badge" style="background:#e2e8f0;color:#0f172a">Acessível</span><h3>Plano Trabalhador</h3><div class="metric hot"><span>Valor</span><strong>R$ 19,90</strong></div><p class="muted">1 cálculo individual, com relatório simples em PDF.</p></div><div class="card"><span class="badge" style="background:#e2e8f0;color:#0f172a">Profissional</span><h3>Plano Profissional</h3><div class="metric hot"><span>Valor</span><strong>R$ 39,90</strong></div><p class="muted">1 cálculo profissional, com lançamentos adicionais e relatório em PDF.</p></div><div class="card"><span class="badge" style="background:#e2e8f0;color:#0f172a">Mensal</span><h3>Plano PRO Mensal</h3><div class="metric hot"><span>Valor</span><strong>R$ 149,00</strong></div><p class="muted">Acesso recorrente por 30 dias no mesmo navegador/dispositivo.</p></div></div></section>
 <section id="leitura" class="screen"><div class="head"><h2>Ler sentença, decisão, acordo, TRCT, holerite ou planilha</h2><p>Extração geral para preencher o cálculo trabalhista.</p></div><div class="grid two"><div class="card"><h3>Documentos</h3><input type="file" id="generalFiles" multiple accept=".pdf,.docx,.txt,.xlsx,.xls,.csv,.html,.htm" onchange="App.handleFiles(this.files)"><div class="actions"><button class="primary" onclick="App.handleFiles(App.el('generalFiles').files)">Anexar</button><button class="secondary" onclick="App.readDocs()">Ler documentos</button><button class="dangerbtn" onclick="App.clearDocs()">Excluir todos</button></div><div id="docs-geral" class="notice info">Nenhum documento anexado.</div><textarea id="generalText" rows="11" placeholder="Texto extraído ou colado manualmente"></textarea></div><div class="card"><h3>Dados extraídos</h3><div class="form"><label>Processo<input id="gProcesso"></label><label>Reclamante/Empregado<input id="gAutor"></label><label>Reclamada/Empregador<input id="gReu"></label><label>Salário-base<input id="gSalario" type="number" step="0.01"></label><label>Admissão<input id="gAdmissao" type="date"></label><label>Saída<input id="gSaida" type="date"></label></div><div id="extractNotice" class="notice info">Leia um documento para extrair dados. A conferência manual é obrigatória.</div><div class="actions"><button class="good" onclick="App.applyExtractedToRescisao()">Aplicar no cálculo rescisório</button><button class="primary" onclick="App.show('rescisao')">Ir para cálculo</button></div></div></div></section>
 <section id="rescisao" class="screen"><div class="head"><h2>Cálculo rescisório trabalhista</h2><p>Saldo de salário, aviso prévio, férias, 1/3, 13º e FGTS.</p></div><div class="card"><h3>Dados do contrato</h3><div class="form four"><label>Empregado/Reclamante<input id="empregado"></label><label>Empregador/Reclamada<input id="empregador"></label><label>Data de admissão<input id="admissao" type="date"></label><label>Data de saída<input id="saida" type="date"></label><label>Salário mensal<input id="salario" type="number" step="0.01" value="0"></label><label>Dias trabalhados no mês da saída<input id="diasSaldo" type="number" step="1" min="0" max="31" value="0"></label><label>Tipo de aviso prévio<select id="tipoAviso" onchange="App.toggleAviso()"><option value="cumprido">Cumprido/trabalhado</option><option value="indenizado">Indenizado</option><option value="nao">Não devido/não informado</option></select></label><label>Valor do aviso indenizado<input id="valorAviso" type="number" step="0.01" value="0"></label><label>Férias vencidas pendentes<input id="feriasVencidasQtd" type="number" step="1" value="0"></label><label>Meses de férias proporcionais<input id="mesesFeriasProp" type="number" step="1" min="0" max="12" value="0"></label><label>Meses de 13º proporcional<input id="meses13" type="number" step="1" min="0" max="12" value="0"></label><label>Saldo FGTS existente<input id="fgtsBaseExistente" type="number" step="0.01" value="0"></label><label>Multa FGTS (%)<input id="multaFgtsPct" type="number" step="0.01" value="40"></label><label>Abatimentos/descontos<input id="abatimentos" type="number" step="0.01" value="0"></label><label>Correção/Juros (%)<input id="corJuros" type="number" step="0.01" value="0"></label></div><div class="notice info"><strong>Observação:</strong> meses proporcionais podem ser preenchidos manualmente. “Sugerir proporções” estima pelas datas, mas deve ser conferido.</div><div class="actions"><button class="secondary" onclick="App.sugerirProporcoes()">Sugerir proporções pelas datas</button><button class="primary" onclick="App.calcRescisao()">Calcular rescisão</button><button class="good" onclick="App.exportPDF()">PDF</button><button class="secondary" onclick="App.exportExcel()">Excel</button></div><div class="metrics"><div class="metric"><span>Saldo salário</span><strong id="rSaldoSalario">R$ 0,00</strong></div><div class="metric"><span>Férias + 1/3</span><strong id="rFerias">R$ 0,00</strong></div><div class="metric"><span>13º</span><strong id="rDecimo">R$ 0,00</strong></div><div class="metric hot"><span>Total líquido</span><strong id="rTotal">R$ 0,00</strong></div></div></div><div class="card module-block"><h3>Detalhamento</h3><div class="tablewrap"><table><thead><tr><th>Verba</th><th>Base</th><th>Memória</th><th>Valor</th></tr></thead><tbody id="detalheBody"></tbody></table></div></div></section>
 <section id="manual" class="screen"><div class="head"><h2>Inserção manual</h2><p>Inclua valores e datas manualmente quando a leitura automática não for suficiente.</p></div><div class="card"><div class="form three"><label>Descrição<input id="manualDesc" placeholder="Ex.: diferença de FGTS, desconto, verba deferida"></label><label>Natureza<select id="manualNatureza"><option value="acrescimo">Acréscimo/verba devida</option><option value="abatimento">Abatimento/desconto</option><option value="informativo">Informativo</option></select></label><label>Valor<input id="manualValor" type="number" step="0.01" value="0"></label><label>Data inicial<input id="manualDataInicial" type="date"></label><label>Data final<input id="manualDataFinal" type="date"></label><label>Origem<input id="manualOrigem" placeholder="Ex.: sentença, TRCT, manual"></label></div><label>Observação<textarea id="manualObs" rows="3"></textarea></label><div class="actions"><button class="primary" onclick="App.addManual()">Lançar manualmente</button><button class="dangerbtn" onclick="App.clearManual()">Limpar lançamentos</button><button class="good" onclick="App.calcRescisao()">Recalcular com manuais</button></div><div id="manualList" class="memory">Nenhum lançamento manual.</div></div></section>
@@ -74,7 +74,7 @@
       <label>Chave PIX<input id="cfgPixKey" placeholder="CPF, CNPJ, e-mail, celular ou chave aleatória" value="398429ee-8c62-4a59-8d83-f15ce0505ddd"></label>
       <label>Tipo da chave PIX<select id="cfgPixTipo"><option>CPF</option><option>CNPJ</option><option>E-mail</option><option>Celular</option><option selected>Chave aleatória</option></select></label>
       <label>Cidade do recebedor<input id="cfgCidade" placeholder="Ex.: PARACATU"></label>
-      <label>Valor por cálculo trabalhista<input id="cfgValorCalculo" type="number" step="0.01" value="19.90"></label>
+      <label>Valor padrão do plano trabalhador<input id="cfgValorCalculo" type="number" step="0.01" value="19.90"></label>
       <label>Descrição padrão<input id="cfgDescricao" placeholder="Cálculo Trabalhista JusProf"></label>
       <label>WhatsApp/suporte<input id="cfgWhatsapp" placeholder="Opcional"></label>
     </div>
@@ -85,7 +85,7 @@
     <div class="form three">
       <label>Gateway<select id="cfgGateway"><option>Link de pagamento</option><option>Mercado Pago</option><option>Asaas</option><option>Stripe</option><option>Pagar.me</option><option>Outro</option></select></label>
       <label>Link de checkout/cartão crédito ou débito<input id="cfgCheckoutLink" placeholder="Cole aqui o link de pagamento do gateway" value="https://mpago.la/18cwbQL"></label>
-      <label>URL do webhook/backend<input id="cfgWebhookUrl" placeholder="Opcional — para versão profissional" value="398429ee-8c62-4a59-8d83-f15ce0505ddd"></label>
+      <label>URL do webhook/backend<input id="cfgWebhookUrl" placeholder="Opcional — para versão profissional" value="/api/mp-webhook"></label>
       <label>Chave pública do gateway<input id="cfgPublicKey" placeholder="Somente chave pública, se houver"></label>
       <label>Moeda<select id="cfgMoeda"><option>BRL</option></select></label>
       <label>Ambiente<select id="cfgAmbiente"><option>Teste</option><option>Produção</option></select></label>
@@ -164,8 +164,8 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
             <input id="pixValue" type="number" step="0.01" value="19.90">
           </label>
         </div>
-        <label>PIX copia e cola
-          <textarea id="pixCopyPaste" rows="4" readonly></textarea>
+        <label>PIX Copia e Cola — somente chave aleatória
+          <textarea id="pixCopyPaste" rows="2" readonly>398429ee-8c62-4a59-8d83-f15ce0505ddd</textarea>
         </label>
         <div class="actions">
           <button class="secondary" onclick="App.generatePixTest()">Gerar PIX</button>
@@ -307,7 +307,7 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
       whatsapp: "",
       gateway: "Link de pagamento",
       checkoutLink: "https://mpago.la/18cwbQL",
-      webhookUrl: "398429ee-8c62-4a59-8d83-f15ce0505ddd",
+      webhookUrl: "/api/mp-webhook",
       publicKey: "",
       moeda: "BRL",
       ambiente: "Teste"
@@ -358,7 +358,7 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
       recebedorDoc: this.el("cfgRecebedorDoc")?.value.trim() || "",
       emailFinanceiro: this.el("cfgEmailFinanceiro")?.value.trim() || "",
       pixKey: this.el("cfgPixKey")?.value.trim() || "398429ee-8c62-4a59-8d83-f15ce0505ddd",
-      pixTipo: this.el("cfgPixTipo")?.value || "CPF",
+      pixTipo: this.el("cfgPixTipo")?.value || "Chave aleatória",
       cidade: this.el("cfgCidade")?.value.trim() || "PARACATU",
       valorCalculo: this.num(this.el("cfgValorCalculo")?.value) || 19.90,
       descricao: this.el("cfgDescricao")?.value.trim() || "Cálculo Trabalhista JusProf",
@@ -648,7 +648,7 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
   window.__jusprofMercadoPagoLinkCadastradoV1 = true;
 
   App.checkoutPadraoMercadoPago = "https://mpago.la/18cwbQL";
-  App.referenciaGatewayPadrao = "398429ee-8c62-4a59-8d83-f15ce0505ddd";
+  App.referenciaGatewayPadrao = "/api/mp-webhook";
 
   const oldDefaultBillingConfigMP = App.defaultBillingConfig ? App.defaultBillingConfig.bind(App) : null;
   if(oldDefaultBillingConfigMP){
@@ -695,7 +695,7 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
           `PIX: ${this.esc(c.pixKey || "não informado")}<br>`+
           `Valor: ${this.money(c.valorCalculo || 19.90)}<br>`+
           `Cartão crédito/débito: <a href="${this.esc(c.checkoutLink || this.checkoutPadraoMercadoPago)}" target="_blank">abrir checkout Mercado Pago</a><br>`+
-          `<small>Chave PIX aleatória: ${this.esc(c.webhookUrl || this.referenciaGatewayPadrao)}</small>`;
+          `<small>Webhook: ${this.esc(c.webhookUrl || this.referenciaGatewayPadrao)}</small>`;
       }
     };
   }
@@ -1351,6 +1351,7 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
       const d = JSON.parse(localStorage.getItem(ACCESS_KEY)||"null");
       if(!d || d.status !== "liberado") return false;
       // Token válido por 2 horas
+      if (d.expiresAt) return Date.now() < d.expiresAt;
       const age = Date.now() - (d.ts || 0);
       return age < 2 * 60 * 60 * 1000;
     }catch(e){ return false; }
@@ -1561,4 +1562,356 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
   });
 })();
 </script>
+
+<script>
+/* JusProf Trabalhista — Pagamento por plano: PIX QR Code, PIX chave aleatória e Cartão Mercado Pago
+   Correção: o valor não fica injetado em R$ 19,90. Ele acompanha o plano selecionado. */
+(function(){
+  if(window.__jusprofPagamentoPlanosCorrigidoV1) return;
+  window.__jusprofPagamentoPlanosCorrigidoV1 = true;
+
+  const PIX_KEY = "398429ee-8c62-4a59-8d83-f15ce0505ddd";
+  const WEBHOOK_URL = "/.netlify/functions/mp-webhook";
+  const ACCESS_KEY = "jusprofTrabAccessLiberado";
+  const EMAIL_KEY = "jusprofTrabPayerEmail";
+  const NAME_KEY = "jusprofTrabPayerName";
+  const PLAN_KEY = "jusprofTrabSelectedPlan";
+  const METHOD_KEY = "jusprofTrabPayMethod";
+
+  const PLANOS = [
+    {id:"trabalhador", etiqueta:"Acessível", nome:"Plano Trabalhador", valor:19.90, descricao:"1 cálculo individual, com relatório simples em PDF.", acessoHoras:2},
+    {id:"profissional", etiqueta:"Profissional", nome:"Plano Profissional", valor:39.90, descricao:"1 cálculo profissional, com lançamentos adicionais e relatório em PDF.", acessoHoras:2},
+    {id:"pro_mensal", etiqueta:"Mensal", nome:"Plano PRO Mensal", valor:149.00, descricao:"Acesso recorrente por 30 dias no mesmo navegador/dispositivo.", acessoHoras:24*30}
+  ];
+
+  function $(id){ return document.getElementById(id); }
+  function money(v){ return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+  function esc(s){ return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
+  function toast(msg){ try{ if(window.App && App.toast) App.toast(msg); }catch(e){} }
+  function getPlan(id){ return PLANOS.find(p=>p.id===id) || PLANOS[0]; }
+  function planFromAmount(v){
+    const n = Number(v||0);
+    if(n >= 148.99) return getPlan('pro_mensal');
+    if(n >= 39.89) return getPlan('profissional');
+    return getPlan('trabalhador');
+  }
+  function selectedPlan(){ return getPlan(localStorage.getItem(PLAN_KEY) || 'trabalhador'); }
+  function selectedMethod(){ return localStorage.getItem(METHOD_KEY) || 'pix_qrcode'; }
+  function currentEmail(){ return ($('jpPayerEmail')?.value || '').trim().toLowerCase(); }
+  function currentName(){ return ($('jpPayerName')?.value || '').trim(); }
+  function persistPayer(){
+    const email = currentEmail();
+    const name = currentName();
+    if(email) localStorage.setItem(EMAIL_KEY, email);
+    if(name) localStorage.setItem(NAME_KEY, name);
+    return { email, name };
+  }
+  function hasAccess(){
+    try{
+      const d = JSON.parse(localStorage.getItem(ACCESS_KEY)||"null");
+      if(!d || d.status !== "liberado") return false;
+      if(d.expiresAt) return Date.now() < d.expiresAt;
+      return Date.now() - (d.ts || 0) < 2*60*60*1000;
+    }catch(e){ return false; }
+  }
+  function saveAccess(pagador, valor, planId){
+    const plan = getPlan(planId || planFromAmount(valor).id);
+    localStorage.setItem(ACCESS_KEY, JSON.stringify({
+      status:"liberado",
+      pagador,
+      valor:Number(valor||plan.valor),
+      planId:plan.id,
+      planName:plan.nome,
+      ts:Date.now(),
+      expiresAt: Date.now() + plan.acessoHoras*60*60*1000
+    }));
+  }
+  function clearAccess(){
+    localStorage.removeItem(ACCESS_KEY);
+    localStorage.removeItem(EMAIL_KEY);
+    localStorage.removeItem(NAME_KEY);
+  }
+  function setStatus(type, html){
+    const box = $('jpPaymentStatus');
+    if(!box) return;
+    box.className = 'notice ' + (type || 'info');
+    box.style.display = 'block';
+    box.innerHTML = html;
+  }
+
+  function planCard(p){
+    const active = selectedPlan().id === p.id;
+    return `<div class="card" style="border:${active?'3px solid #0f172a':'1px solid #e2e8f0'};box-shadow:${active?'0 12px 26px rgba(15,23,42,.15)':'0 8px 22px rgba(15,23,42,.05)'}">
+      <span class="badge" style="background:#e2e8f0;color:#0f172a">${esc(p.etiqueta)}</span>
+      <h3>${esc(p.nome)}</h3>
+      <div class="metric hot"><span>Valor</span><strong>${money(p.valor)}</strong></div>
+      <p class="muted">${esc(p.descricao)}</p>
+      <button class="${active?'good':'primary'}" onclick="App.jpSelectPlan('${p.id}')">${active?'Plano selecionado':'Selecionar plano'}</button>
+    </div>`;
+  }
+
+  function renderUnifiedPanel(){
+    const pagamento = $('pagamento');
+    if(!pagamento) return;
+
+    const oldLocal = $('paymentMethodsPanel');
+    if(oldLocal) oldLocal.remove();
+
+    let panel = $('mpPayPanel');
+    if(!panel){
+      panel = document.createElement('div');
+      panel.id = 'mpPayPanel';
+      panel.className = 'card module-block';
+      pagamento.appendChild(panel);
+    }
+
+    const plan = selectedPlan();
+    const savedEmail = localStorage.getItem(EMAIL_KEY) || '';
+    const savedName = localStorage.getItem(NAME_KEY) || '';
+    const method = selectedMethod();
+
+    panel.innerHTML = `
+      <h3>Escolha o plano</h3>
+      <div class="grid three" id="jpPlanGrid">${PLANOS.map(planCard).join('')}</div>
+      <div class="notice info" style="margin-top:14px">
+        <strong>Plano selecionado:</strong> ${esc(plan.nome)} — <strong>${money(plan.valor)}</strong>.
+        ${plan.id==='pro_mensal' ? 'Acesso previsto: 30 dias.' : 'Acesso previsto: cálculo avulso.'}
+      </div>
+
+      <h3>Pagamento do cálculo trabalhista</h3>
+      <div class="notice ${hasAccess() ? 'ok' : 'danger'}" id="jpAccessStatus">
+        ${hasAccess()
+          ? '<strong>✓ Acesso liberado.</strong> O cálculo está disponível conforme o plano pago.'
+          : '<strong>Acesso bloqueado.</strong> Escolha o plano e a forma de pagamento para liberar o cálculo.'}
+      </div>
+
+      <div class="form three">
+        <label>Forma de pagamento
+          <select id="jpPayMethod" onchange="App.jpRenderPaymentChoice()">
+            <option value="pix_qrcode" ${method==='pix_qrcode'?'selected':''}>PIX QR Code automático</option>
+            <option value="pix_chave" ${method==='pix_chave'?'selected':''}>PIX Copia e Cola — chave aleatória</option>
+            <option value="cartao" ${method==='cartao'?'selected':''}>Cartão crédito/débito</option>
+          </select>
+        </label>
+        <label>Nome do pagador
+          <input id="jpPayerName" value="${esc(savedName)}" placeholder="Nome do cliente">
+        </label>
+        <label>E-mail do pagador
+          <input id="jpPayerEmail" type="email" value="${esc(savedEmail)}" placeholder="email@exemplo.com">
+        </label>
+      </div>
+
+      <div class="metrics">
+        <div class="metric hot"><span>Valor do plano escolhido</span><strong>${money(plan.valor)}</strong></div>
+        <div class="metric"><span>PIX manual</span><strong>Chave aleatória</strong></div>
+        <div class="metric"><span>PIX QR Code</span><strong>Mercado Pago</strong></div>
+        <div class="metric"><span>Cartão</span><strong>Checkout seguro</strong></div>
+      </div>
+
+      <div id="jpPixQrPanel" class="module-block">
+        <h3>PIX QR Code automático</h3>
+        <div class="notice info">
+          O QR Code será gerado pelo Mercado Pago com o valor do plano escolhido: <strong>${money(plan.valor)}</strong>.
+        </div>
+        <div class="actions">
+          <button class="primary" onclick="App.jpGeneratePixQr()">Gerar QR Code PIX de ${money(plan.valor)}</button>
+          <button class="good" onclick="App.jpVerifyPayment()">✓ Verificar pagamento</button>
+        </div>
+        <div id="jpPixQrResult" class="notice info" style="display:none"></div>
+      </div>
+
+      <div id="jpPixKeyPanel" class="module-block">
+        <h3>PIX Copia e Cola — chave aleatória</h3>
+        <div class="notice info">
+          O valor do plano escolhido é <strong>${money(plan.valor)}</strong>. Conforme solicitado, o campo de copiar mostra somente a chave Pix aleatória.
+        </div>
+        <label>Chave Pix aleatória
+          <textarea id="jpPixKeyOnly" rows="2" readonly>${PIX_KEY}</textarea>
+        </label>
+        <div class="actions">
+          <button class="primary" onclick="App.jpCopyPixKey()">Copiar chave Pix</button>
+          <button class="secondary" onclick="App.jpManualPaidInfo()">Ver orientação do Pix manual</button>
+        </div>
+      </div>
+
+      <div id="jpCardPanel" class="module-block">
+        <h3>Cartão de crédito/débito</h3>
+        <div class="notice info">
+          O checkout de cartão será aberto no Mercado Pago com o valor do plano escolhido: <strong>${money(plan.valor)}</strong>.
+        </div>
+        <div class="actions">
+          <button class="primary" onclick="App.jpCreateCardCheckout()">Abrir checkout de cartão de ${money(plan.valor)}</button>
+          <button class="good" onclick="App.jpVerifyPayment()">✓ Verificar pagamento</button>
+        </div>
+        <div id="jpCardResult" class="notice info" style="display:none"></div>
+      </div>
+
+      <div class="actions">
+        <button class="good" onclick="App.jpVerifyPayment()">✓ Verificar pagamento</button>
+        <button class="secondary" onclick="App.jpRefreshPaymentPanel()">Atualizar tela</button>
+        <button class="dangerbtn" onclick="App.jpClearAccess()">Limpar acesso</button>
+      </div>
+      <div id="jpPaymentStatus" class="notice info" style="display:none"></div>
+    `;
+
+    if(window.App && App.jpRenderPaymentChoice) App.jpRenderPaymentChoice();
+  }
+
+  function updateAccessStatus(){
+    const box = $('jpAccessStatus');
+    if(box){
+      box.className = 'notice ' + (hasAccess() ? 'ok' : 'danger');
+      box.innerHTML = hasAccess()
+        ? '<strong>✓ Acesso liberado.</strong> O cálculo está disponível conforme o plano pago.'
+        : '<strong>Acesso bloqueado.</strong> Escolha o plano e a forma de pagamento para liberar o cálculo.';
+    }
+  }
+
+  function installAppMethods(){
+    if(!window.App) return;
+
+    App.jpRefreshPaymentPanel = function(){ renderUnifiedPanel(); updateAccessStatus(); };
+
+    App.jpSelectPlan = function(planId){
+      localStorage.setItem(PLAN_KEY, getPlan(planId).id);
+      renderUnifiedPanel();
+      toast('Plano selecionado: ' + selectedPlan().nome + ' — ' + money(selectedPlan().valor));
+    };
+
+    App.jpRenderPaymentChoice = function(){
+      const method = $('jpPayMethod')?.value || 'pix_qrcode';
+      localStorage.setItem(METHOD_KEY, method);
+      if($('jpPixQrPanel')) $('jpPixQrPanel').style.display = method === 'pix_qrcode' ? 'block' : 'none';
+      if($('jpPixKeyPanel')) $('jpPixKeyPanel').style.display = method === 'pix_chave' ? 'block' : 'none';
+      if($('jpCardPanel')) $('jpCardPanel').style.display = method === 'cartao' ? 'block' : 'none';
+      updateAccessStatus();
+    };
+
+    App.jpCopyPixKey = async function(){
+      try{ await navigator.clipboard.writeText(PIX_KEY); }catch(e){}
+      const plan = selectedPlan();
+      setStatus('ok', `<strong>Chave Pix copiada.</strong><br><code>${PIX_KEY}</code><br>Plano escolhido: ${esc(plan.nome)} — ${money(plan.valor)}.`);
+      toast('Chave Pix copiada.');
+    };
+
+    App.generatePixTest = function(){
+      if($('pixCopyPaste')) $('pixCopyPaste').value = PIX_KEY;
+      if($('pixKey')) $('pixKey').value = PIX_KEY;
+      if($('pixValue')) $('pixValue').value = selectedPlan().valor.toFixed(2);
+      return PIX_KEY;
+    };
+    App.copyPix = App.jpCopyPixKey;
+
+    App.jpManualPaidInfo = function(){
+      const plan = selectedPlan();
+      setStatus('info', `<strong>PIX manual por chave aleatória.</strong><br>Plano: ${esc(plan.nome)} — <strong>${money(plan.valor)}</strong><br>Chave: <code>${PIX_KEY}</code><br>Após o pagamento manual, confira o comprovante antes de liberar o cliente.`);
+      toast('Orientação do PIX manual exibida.');
+    };
+
+    App.jpGeneratePixQr = async function(){
+      const plan = selectedPlan();
+      const {email, name} = persistPayer();
+      if(!email){ setStatus('danger','Informe o e-mail do pagador para gerar o QR Code.'); return; }
+      const out = $('jpPixQrResult');
+      if(out){ out.style.display='block'; out.className='notice info'; out.innerHTML=`Gerando QR Code PIX de ${money(plan.valor)} pelo Mercado Pago...`; }
+      try{
+        const res = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action:'gerar_pix', email, name, plan_id:plan.id })
+        });
+        const data = await res.json();
+        if(!res.ok || data.error) throw new Error(data.error || 'Não foi possível gerar o QR Code.');
+        if(out){
+          out.className='notice ok';
+          out.innerHTML = `
+            <strong>QR Code PIX gerado para ${esc(plan.nome)} — ${money(plan.valor)}.</strong><br>
+            ${data.qr_code_base64 ? `<img alt="QR Code PIX" style="width:230px;max-width:100%;display:block;margin:14px 0;border-radius:16px;border:1px solid #cbd5e1" src="data:image/png;base64,${data.qr_code_base64}">` : ''}
+            ${data.ticket_url ? `<a href="${esc(data.ticket_url)}" target="_blank">Abrir página do PIX</a><br>` : ''}
+            <small>ID do pagamento: ${esc(data.payment_id || '')}</small><br>
+            <small>O PIX Copia e Cola manual permanece somente com a chave aleatória.</small>`;
+        }
+        setStatus('info','Após pagar o QR Code, aguarde alguns instantes e clique em <strong>Verificar pagamento</strong>.');
+      }catch(e){
+        if(out){ out.className='notice danger'; out.innerHTML = esc(e.message); }
+        setStatus('danger', esc(e.message));
+      }
+    };
+
+    App.jpCreateCardCheckout = async function(){
+      const plan = selectedPlan();
+      const {email, name} = persistPayer();
+      if(!email){ setStatus('danger','Informe o e-mail do pagador para abrir o checkout de cartão.'); return; }
+      const out = $('jpCardResult');
+      if(out){ out.style.display='block'; out.className='notice info'; out.innerHTML=`Gerando checkout de cartão de ${money(plan.valor)}...`; }
+      try{
+        const res = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action:'criar_checkout', email, name, plan_id:plan.id })
+        });
+        const data = await res.json();
+        if(!res.ok || data.error) throw new Error(data.error || 'Não foi possível gerar o checkout.');
+        const link = data.init_point || data.sandbox_init_point || (App.checkoutPadraoMercadoPago || '');
+        if(!link) throw new Error('Checkout não retornou link de pagamento.');
+        if(out){
+          out.className='notice ok';
+          out.innerHTML = `<strong>Checkout gerado para ${esc(plan.nome)} — ${money(plan.valor)}.</strong><br><a href="${esc(link)}" target="_blank">Abrir pagamento por cartão</a><br><small>Depois do pagamento aprovado, clique em Verificar pagamento.</small>`;
+        }
+        window.open(link, '_blank');
+      }catch(e){
+        if(out){ out.className='notice danger'; out.innerHTML = esc(e.message); }
+        setStatus('danger', esc(e.message));
+      }
+    };
+
+    App.jpVerifyPayment = async function(){
+      const {email} = persistPayer();
+      if(!email){ setStatus('danger','Informe o e-mail usado no pagamento.'); return; }
+      setStatus('info','Verificando pagamento aprovado no Mercado Pago...');
+      try{
+        const res = await fetch(`${WEBHOOK_URL}?check=${encodeURIComponent(email)}`);
+        const data = await res.json();
+        if(data.liberado){
+          const paidPlan = data.planId ? getPlan(data.planId) : planFromAmount(data.valor);
+          saveAccess(data.pagador || email, data.valor || paidPlan.valor, paidPlan.id);
+          setStatus('ok', `<strong>✓ Pagamento confirmado.</strong><br>Plano liberado: ${esc(paidPlan.nome)}.<br>Valor confirmado: ${money(data.valor || paidPlan.valor)}.`);
+          toast('Pagamento confirmado. Acesso liberado.');
+          updateAccessStatus();
+        }else{
+          setStatus('danger','Pagamento ainda não confirmado. Aguarde alguns instantes e tente novamente. Se o pagamento foi feito pela chave Pix manual, a conferência precisa ser manual.');
+        }
+      }catch(e){
+        setStatus('danger', 'Erro ao verificar pagamento: ' + esc(e.message));
+      }
+    };
+
+    App.jpClearAccess = function(){
+      clearAccess();
+      setStatus('info','Acesso limpo neste navegador.');
+      toast('Acesso limpo.');
+      updateAccessStatus();
+    };
+
+    App.mpVerifyPayment = App.jpVerifyPayment;
+    App.mpClearAccess = App.jpClearAccess;
+
+    if(!App.__jpPlanShowWrapped){
+      App.__jpPlanShowWrapped = true;
+      const oldShow = App.show ? App.show.bind(App) : null;
+      App.show = function(id){
+        const r = oldShow ? oldShow(id) : undefined;
+        if(id === 'pagamento') setTimeout(renderUnifiedPanel, 60);
+        return r;
+      };
+    }
+  }
+
+  window.addEventListener('load', function(){
+    setTimeout(()=>{ installAppMethods(); renderUnifiedPanel(); updateAccessStatus(); }, 600);
+    setInterval(()=>{ installAppMethods(); renderUnifiedPanel(); updateAccessStatus(); }, 2500);
+  });
+})();
+</script>
+
 </body></html>
