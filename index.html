@@ -1909,7 +1909,148 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
 
   window.addEventListener('load', function(){
     setTimeout(()=>{ installAppMethods(); renderUnifiedPanel(); updateAccessStatus(); }, 600);
-    setInterval(()=>{ installAppMethods(); renderUnifiedPanel(); updateAccessStatus(); }, 2500);
+    setInterval(()=>{ installAppMethods(); updateAccessStatus(); }, 2500);
+  });
+})();
+</script>
+
+
+<script>
+/* JusProf Trabalhista — correção final de integração PIX/Cartão e cópia robusta
+   Mantém cálculos, planos, bloqueio e webhook. Corrige somente a tela de pagamento. */
+(function(){
+  if(window.__jusprofPagamentoPixCartaoCopiaFinalV1) return;
+  window.__jusprofPagamentoPixCartaoCopiaFinalV1 = true;
+
+  const PIX_KEY = "398429ee-8c62-4a59-8d83-f15ce0505ddd";
+  const METHOD_KEY = "jusprofTrabPayMethod";
+
+  function $(id){ return document.getElementById(id); }
+  function toast(msg){ try{ if(window.App && App.toast) App.toast(msg); }catch(e){} }
+  function esc(s){ return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
+
+  function copyTextFallback(text){
+    return new Promise(resolve=>{
+      try{
+        if(navigator.clipboard && window.isSecureContext){
+          navigator.clipboard.writeText(text).then(()=>resolve(true)).catch(()=>resolve(false));
+          return;
+        }
+      }catch(e){}
+      try{
+        const ta=document.createElement('textarea');
+        ta.value=text;
+        ta.setAttribute('readonly','readonly');
+        ta.style.position='fixed';
+        ta.style.left='-9999px';
+        ta.style.top='0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        const ok=document.execCommand('copy');
+        document.body.removeChild(ta);
+        resolve(!!ok);
+      }catch(e){ resolve(false); }
+    });
+  }
+
+  function showStatus(type, html){
+    const box=$('jpPaymentStatus') || $('paymentStatus');
+    if(!box) return;
+    box.style.display='block';
+    box.className='notice '+(type||'info');
+    box.innerHTML=html;
+  }
+
+  function ensurePaymentChoice(){
+    const panel=$('mpPayPanel') || $('paymentMethodsPanel');
+    if(!panel) return;
+
+    const sel=$('jpPayMethod') || $('payMethod');
+    if(sel){
+      sel.style.display='block';
+      sel.disabled=false;
+      sel.removeAttribute('disabled');
+      sel.onchange=function(){
+        const val=this.value;
+        localStorage.setItem(METHOD_KEY,val);
+        renderChoice(val);
+      };
+      const saved=localStorage.getItem(METHOD_KEY);
+      if(saved && [...sel.options].some(o=>o.value===saved)) sel.value=saved;
+    }
+
+    const txt=$('jpPixKeyOnly') || $('pixCopyPaste');
+    if(txt){
+      txt.value=PIX_KEY;
+      txt.readOnly=true;
+      txt.style.userSelect='text';
+      txt.onclick=function(){ this.focus(); this.select(); };
+    }
+    const pixKeyInput=$('pixKey');
+    if(pixKeyInput) pixKeyInput.value=PIX_KEY;
+
+    renderChoice(sel ? sel.value : (localStorage.getItem(METHOD_KEY)||'pix_qrcode'));
+  }
+
+  function renderChoice(method){
+    method = method || localStorage.getItem(METHOD_KEY) || 'pix_qrcode';
+    localStorage.setItem(METHOD_KEY, method);
+
+    const qr=$('jpPixQrPanel');
+    const pix=$('jpPixKeyPanel') || $('pixPanel');
+    const card=$('jpCardPanel') || $('cardPanel');
+
+    if(qr) qr.style.display = method==='pix_qrcode' ? 'block':'none';
+    if(pix) pix.style.display = (method==='pix_chave' || method==='pix' || method==='pix_qrcode') ? (method==='pix_qrcode' && qr ? 'none':'block') : 'none';
+    if(card) card.style.display = method==='cartao' ? 'block':'none';
+  }
+
+  function installFinalOverrides(){
+    if(!window.App) return;
+
+    App.jpCopyPixKey = async function(){
+      const txt=PIX_KEY;
+      const ok=await copyTextFallback(txt);
+      const field=$('jpPixKeyOnly') || $('pixCopyPaste');
+      if(field){ field.value=txt; field.focus(); field.select(); }
+      showStatus(ok?'ok':'info', `<strong>${ok?'Chave Pix copiada.':'Chave Pix selecionada para copiar manualmente.'}</strong><br><code>${esc(txt)}</code>`);
+      toast(ok?'Chave Pix copiada.':'Copie a chave selecionada.');
+      return txt;
+    };
+
+    App.copyPix = App.jpCopyPixKey;
+    App.generatePixTest = function(){
+      const txt=$('jpPixKeyOnly') || $('pixCopyPaste');
+      if(txt) txt.value=PIX_KEY;
+      const pixKeyInput=$('pixKey');
+      if(pixKeyInput) pixKeyInput.value=PIX_KEY;
+      return PIX_KEY;
+    };
+
+    const oldRender = App.jpRenderPaymentChoice ? App.jpRenderPaymentChoice.bind(App) : null;
+    App.jpRenderPaymentChoice = function(){
+      if(oldRender) oldRender();
+      const sel=$('jpPayMethod') || $('payMethod');
+      renderChoice(sel ? sel.value : localStorage.getItem(METHOD_KEY));
+      ensurePaymentChoice();
+    };
+
+    const oldShow = App.show ? App.show.bind(App) : null;
+    if(oldShow && !App.__pixCartaoShowFinalWrapped){
+      App.__pixCartaoShowFinalWrapped=true;
+      App.show=function(id){
+        const r=oldShow(id);
+        if(id==='pagamento') setTimeout(()=>{ ensurePaymentChoice(); },120);
+        return r;
+      };
+    }
+  }
+
+  window.addEventListener('load',()=>{
+    setTimeout(()=>{ installFinalOverrides(); ensurePaymentChoice(); },900);
+    setTimeout(()=>{ installFinalOverrides(); ensurePaymentChoice(); },1800);
   });
 })();
 </script>
