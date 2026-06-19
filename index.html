@@ -1340,6 +1340,7 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
 
   const ACCESS_KEY   = "jusprofTrabAccessLiberado";
   const EMAIL_KEY    = "jusprofTrabPayerEmail";
+  const PAYMENT_ID_KEY = "jusprofTrabPaymentId";
   const WEBHOOK_URL  = "/.netlify/functions/mp-webhook"; // Netlify Function
   const BLOCKED      = new Set(["leitura","rescisao","manual","relatorio","metricas"]);
 
@@ -1788,10 +1789,19 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
     };
 
     App.jpCopyPixKey = async function(){
-      try{ await navigator.clipboard.writeText(PIX_KEY); }catch(e){}
       const plan = selectedPlan();
-      setStatus('ok', `<strong>Chave Pix copiada.</strong><br><code>${PIX_KEY}</code><br>Plano escolhido: ${esc(plan.nome)} — ${money(plan.valor)}.`);
-      toast('Chave Pix copiada.');
+      try{
+        if(navigator.clipboard && window.isSecureContext){
+          await navigator.clipboard.writeText(PIX_KEY);
+        }else{
+          const ta = $('jpPixKeyOnly') || $('pixCopyPaste') || $('pixKey');
+          if(ta){ ta.focus(); ta.select(); document.execCommand('copy'); }
+        }
+        setStatus('ok', `<strong>Chave Pix copiada.</strong><br><code>${PIX_KEY}</code><br>Plano escolhido: ${esc(plan.nome)} — ${money(plan.valor)}.`);
+        toast('Chave Pix copiada.');
+      }catch(e){
+        setStatus('info', `<strong>Copie manualmente esta chave Pix:</strong><br><code>${PIX_KEY}</code><br>Plano escolhido: ${esc(plan.nome)} — ${money(plan.valor)}.`);
+      }
     };
 
     App.generatePixTest = function(){
@@ -1815,21 +1825,26 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
       const out = $('jpPixQrResult');
       if(out){ out.style.display='block'; out.className='notice info'; out.innerHTML=`Gerando QR Code PIX de ${money(plan.valor)} pelo Mercado Pago...`; }
       try{
-        const res = await fetch(WEBHOOK_URL, {
+        const res = await fetch('/.netlify/functions/create-pix', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action:'gerar_pix', email, name, plan_id:plan.id })
+          body: JSON.stringify({
+            amount: plan.valor,
+            description: 'JusProf Trabalhista - ' + plan.nome,
+            payer: { email, nome: name }
+          })
         });
         const data = await res.json();
         if(!res.ok || data.error) throw new Error(data.error || 'Não foi possível gerar o QR Code.');
+        if(data.payment_id || data.id) localStorage.setItem(PAYMENT_ID_KEY, String(data.payment_id || data.id));
         if(out){
           out.className='notice ok';
           out.innerHTML = `
             <strong>QR Code PIX gerado para ${esc(plan.nome)} — ${money(plan.valor)}.</strong><br>
             ${data.qr_code_base64 ? `<img alt="QR Code PIX" style="width:230px;max-width:100%;display:block;margin:14px 0;border-radius:16px;border:1px solid #cbd5e1" src="data:image/png;base64,${data.qr_code_base64}">` : ''}
+            ${data.qr_code ? `<label>PIX Copia e Cola do Mercado Pago<textarea rows="4" readonly onclick="this.select()">${esc(data.qr_code)}</textarea></label>` : ''}
             ${data.ticket_url ? `<a href="${esc(data.ticket_url)}" target="_blank">Abrir página do PIX</a><br>` : ''}
-            <small>ID do pagamento: ${esc(data.payment_id || '')}</small><br>
-            <small>O PIX Copia e Cola manual permanece somente com a chave aleatória.</small>`;
+            <small>ID do pagamento: ${esc(data.payment_id || data.id || '')}</small>`;
         }
         setStatus('info','Após pagar o QR Code, aguarde alguns instantes e clique em <strong>Verificar pagamento</strong>.');
       }catch(e){
@@ -1845,14 +1860,18 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
       const out = $('jpCardResult');
       if(out){ out.style.display='block'; out.className='notice info'; out.innerHTML=`Gerando checkout de cartão de ${money(plan.valor)}...`; }
       try{
-        const res = await fetch(WEBHOOK_URL, {
+        const res = await fetch('/.netlify/functions/create-checkout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action:'criar_checkout', email, name, plan_id:plan.id })
+          body: JSON.stringify({
+            amount: plan.valor,
+            description: 'JusProf Trabalhista - ' + plan.nome,
+            payer: { email, nome: name }
+          })
         });
         const data = await res.json();
         if(!res.ok || data.error) throw new Error(data.error || 'Não foi possível gerar o checkout.');
-        const link = data.init_point || data.sandbox_init_point || (App.checkoutPadraoMercadoPago || '');
+        const link = data.init_point || data.sandbox_init_point || '';
         if(!link) throw new Error('Checkout não retornou link de pagamento.');
         if(out){
           out.className='notice ok';
@@ -1867,19 +1886,24 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
 
     App.jpVerifyPayment = async function(){
       const {email} = persistPayer();
-      if(!email){ setStatus('danger','Informe o e-mail usado no pagamento.'); return; }
+      const paymentId = localStorage.getItem(PAYMENT_ID_KEY) || '';
+      if(!paymentId){
+        setStatus('danger','Nenhum QR Code PIX foi gerado ainda neste navegador. Gere o QR Code primeiro. Para Pix por chave aleatória manual, a conferência é manual pelo comprovante.');
+        return;
+      }
       setStatus('info','Verificando pagamento aprovado no Mercado Pago...');
       try{
-        const res = await fetch(`${WEBHOOK_URL}?check=${encodeURIComponent(email)}`);
+        const res = await fetch(`/.netlify/functions/check-payment?id=${encodeURIComponent(paymentId)}`);
         const data = await res.json();
-        if(data.liberado){
-          const paidPlan = data.planId ? getPlan(data.planId) : planFromAmount(data.valor);
-          saveAccess(data.pagador || email, data.valor || paidPlan.valor, paidPlan.id);
-          setStatus('ok', `<strong>✓ Pagamento confirmado.</strong><br>Plano liberado: ${esc(paidPlan.nome)}.<br>Valor confirmado: ${money(data.valor || paidPlan.valor)}.`);
+        if(!res.ok || data.error) throw new Error(data.error || 'Erro ao verificar pagamento.');
+        if(data.status === 'approved'){
+          const paidPlan = selectedPlan();
+          saveAccess(email || data.payer?.email || 'pagador', data.transaction_amount || paidPlan.valor, paidPlan.id);
+          setStatus('ok', `<strong>✓ Pagamento confirmado.</strong><br>Plano liberado: ${esc(paidPlan.nome)}.<br>Valor confirmado: ${money(data.transaction_amount || paidPlan.valor)}.`);
           toast('Pagamento confirmado. Acesso liberado.');
           updateAccessStatus();
         }else{
-          setStatus('danger','Pagamento ainda não confirmado. Aguarde alguns instantes e tente novamente. Se o pagamento foi feito pela chave Pix manual, a conferência precisa ser manual.');
+          setStatus('danger', `Pagamento ainda não confirmado. Status atual: <strong>${esc(data.status || 'desconhecido')}</strong>. Aguarde alguns instantes e tente novamente.`);
         }
       }catch(e){
         setStatus('danger', 'Erro ao verificar pagamento: ' + esc(e.message));
@@ -2298,289 +2322,213 @@ const App={state:{docs:{geral:[]},manual:[],memory:'Nenhum cálculo gerado.',aud
 </script>
 
 
-
 <script>
-/* JusProf Trabalhista — Integração REAL Mercado Pago via Netlify Functions
-   Substitui o simulador/localStorage por criação real de PIX e Checkout.
-   Requer variáveis de ambiente no Netlify: MP_ACCESS_TOKEN e SITE_URL.
-*/
+/* CORREÇÃO FINAL — Pagamento aprovado libera automaticamente + limpa tela de pagamento.
+   Mantém Netlify Functions e Mercado Pago já configurados. */
 (function(){
-  if(window.__jusprofMercadoPagoRealV3) return;
-  window.__jusprofMercadoPagoRealV3 = true;
+  if(window.__jusprofLiberacaoAutomaticaApprovedFixV1) return;
+  window.__jusprofLiberacaoAutomaticaApprovedFixV1 = true;
 
-  const PAYMENT_KEY = 'jusprofTrabPaymentReal';
-  const ACCESS_KEY = 'jusprofTrabPaymentApproved';
+  const ACCESS_KEYS = ["jusprofTrabAccessLiberado","jusprofTrabAccessCode"];
+  const PAYMENT_ID_KEY = "jusprofTrabPaymentId";
+  const BLOCKED = new Set(["leitura","rescisao","manual","relatorio","metricas"]);
 
-  App.getPlanoSelecionado = function(){
-    const el = this.el('planoSelect');
-    const val = el ? el.value : 'trabalhador';
-    const planos = {
-      trabalhador: {nome:'Plano Trabalhador', valor:19.90},
-      profissional: {nome:'Plano Profissional', valor:39.90},
-      mensal: {nome:'Plano PRO Mensal', valor:149.00}
+  function $(id){ return document.getElementById(id); }
+
+  function money(v){
+    return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+  }
+
+  function isApproved(data){
+    const st = String(data?.status || "").toLowerCase();
+    const detail = String(data?.status_detail || "").toLowerCase();
+    return st === "approved" || detail === "accredited";
+  }
+
+  function saveApprovedAccess(data){
+    const valor = Number(data?.transaction_amount || 19.90);
+    const email = data?.payer?.email || data?.payer?.email_address || localStorage.getItem("jusprofTrabPayerEmail") || "pagador";
+    const access = {
+      status: "liberado",
+      plano: localStorage.getItem("jusprofTrabSelectedPlan") || "Plano Trabalhador",
+      valor,
+      pagador: email,
+      payment_id: data?.id || localStorage.getItem(PAYMENT_ID_KEY) || "",
+      confirmadoEm: new Date().toISOString(),
+      ts: Date.now(),
+      expiresAt: Date.now() + (2 * 60 * 60 * 1000)
     };
-    return planos[val] || planos.trabalhador;
-  };
+    localStorage.setItem("jusprofTrabAccessLiberado", JSON.stringify(access));
+    localStorage.setItem("jusprofTrabAccessCode", JSON.stringify(access));
+    localStorage.setItem("jusprofTrabPaymentStatus", "approved");
+    return access;
+  }
 
-  App.paymentApproved = function(){
+  function hasAccess(){
     try{
-      const p = JSON.parse(localStorage.getItem(ACCESS_KEY)||'null');
-      return !!(p && p.approved && p.expiresAt && new Date(p.expiresAt).getTime() > Date.now());
-    }catch(e){ return false; }
-  };
+      for(const key of ACCESS_KEYS){
+        const d = JSON.parse(localStorage.getItem(key)||"null");
+        if(d && (d.status === "liberado" || d.status === "approved")){
+          if(!d.expiresAt || Date.now() < d.expiresAt) return true;
+        }
+      }
+    }catch(e){}
+    return false;
+  }
 
-  App.markPaymentApproved = function(payment){
-    const plano = this.getPlanoSelecionado();
-    const days = plano.valor >= 149 ? 30 : 1;
-    const expiresAt = new Date(Date.now() + days*24*60*60*1000).toISOString();
-    localStorage.setItem(ACCESS_KEY, JSON.stringify({approved:true, payment, plano, approvedAt:new Date().toISOString(), expiresAt}));
-    this.unlockPaidScreens();
-  };
+  function toast(msg){
+    try{ if(window.App && App.toast) App.toast(msg); }catch(e){}
+  }
 
-  App.unlockPaidScreens = function(){
-    const approved = this.paymentApproved();
-    ['leitura','rescisao','manual','relatorio'].forEach(id=>{
-      const btn = document.querySelector(`.nav[data-screen="${id}"]`);
-      if(btn){
-        btn.disabled = !approved;
-        btn.style.opacity = approved ? '1' : '.45';
-        btn.title = approved ? '' : 'Libere o acesso após pagamento confirmado';
+  function unlockScreens(){
+    document.querySelectorAll(".nav").forEach(btn=>{
+      btn.style.opacity = "";
+      btn.title = "";
+    });
+    BLOCKED.forEach(id=>{
+      const sec = $(id);
+      if(!sec) return;
+      sec.querySelectorAll("[data-mp-lock]").forEach(x=>x.style.display="none");
+      sec.querySelectorAll("input,select,textarea,button").forEach(x=>{
+        if(x.dataset && x.dataset.mpLocked === "1"){
+          x.removeAttribute("disabled");
+          delete x.dataset.mpLocked;
+        }
+      });
+    });
+  }
+
+  function setPaymentOk(data){
+    const valor = data?.transaction_amount ? money(data.transaction_amount) : "valor confirmado";
+    const msg = `<strong>✓ Pagamento aprovado e creditado.</strong><br>Acesso liberado automaticamente.<br>Status: <strong>approved</strong><br>Detalhe: <strong>accredited</strong><br>Valor: ${valor}`;
+
+    ["jpPaymentStatus","paymentStatus","mpVerifyStatus","mpAccessStatus","jpAccessStatus"].forEach(id=>{
+      const el = $(id);
+      if(el){
+        el.style.display = "block";
+        el.className = "notice ok";
+        el.innerHTML = msg;
       }
     });
-  };
 
-  App.requirePayment = function(){
-    if(this.paymentApproved()) return true;
-    this.toast('Pagamento ainda não confirmado. Gere o PIX ou pague no cartão.');
-    this.show('pagamento');
-    return false;
-  };
+    const codigoPanel = $("painelCodigoAcesso");
+    if(codigoPanel) codigoPanel.style.display = "none";
 
-  App.insertPaymentMethods = function(){
-    const pagamento = this.el('pagamento');
-    if(!pagamento) return;
-    const old = this.el('paymentMethodsPanel');
-    if(old) old.remove();
-
-    const card = document.createElement('div');
-    card.id = 'paymentMethodsPanel';
-    card.className = 'card module-block';
-    card.innerHTML = `
-      <h3>Pagamento real Mercado Pago</h3>
-      <div class="notice info">
-        Esta tela cria a cobrança real no Mercado Pago via Netlify Functions. O sistema consulta o status e libera automaticamente quando o pagamento estiver <strong>approved</strong>.
-      </div>
-
-      <div class="form three">
-        <label>Plano
-          <select id="planoSelect" onchange="App.updatePlanoValor()">
-            <option value="trabalhador">Plano Trabalhador — R$ 19,90</option>
-            <option value="profissional">Plano Profissional — R$ 39,90</option>
-            <option value="mensal">Plano PRO Mensal — R$ 149,00</option>
-          </select>
-        </label>
-        <label>Forma de pagamento
-          <select id="payMethod" onchange="App.renderPaymentMethod()">
-            <option value="pix">PIX QR Code / Copia e Cola</option>
-            <option value="cartao">Cartão pelo Checkout Mercado Pago</option>
-          </select>
-        </label>
-        <label>Valor
-          <input id="pixValue" type="number" step="0.01" value="19.90" readonly>
-        </label>
-        <label>Nome do pagador
-          <input id="payName" placeholder="Nome do usuário/pagador">
-        </label>
-        <label>E-mail do pagador
-          <input id="payEmail" placeholder="email@exemplo.com">
-        </label>
-      </div>
-
-      <div id="pixPanel" class="module-block">
-        <h3>PIX Mercado Pago</h3>
-        <div class="actions">
-          <button class="primary" onclick="App.createPixReal()">Gerar PIX real</button>
-          <button class="secondary" onclick="App.copyPixReal()">Copiar Pix Copia e Cola</button>
-          <button class="good" onclick="App.checkPaymentStatus()">Verificar pagamento</button>
-        </div>
-        <div id="pixQrBox" class="notice info">Clique em <strong>Gerar PIX real</strong>.</div>
-        <label>Pix Copia e Cola Mercado Pago
-          <textarea id="pixCopyPaste" rows="4" readonly></textarea>
-        </label>
-      </div>
-
-      <div id="cardPanel" class="module-block" style="display:none">
-        <h3>Cartão Mercado Pago</h3>
-        <div class="notice info">O cartão deve abrir no checkout seguro do Mercado Pago. O HTML não coleta número de cartão.</div>
-        <div class="actions">
-          <button class="primary" onclick="App.createCardCheckoutReal()">Abrir pagamento no cartão</button>
-          <button class="good" onclick="App.checkPaymentStatus()">Verificar pagamento</button>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="secondary" onclick="App.restoreLastPayment()">Recarregar última cobrança</button>
-        <button class="dangerbtn" onclick="App.clearPaymentReal()">Limpar pagamento local</button>
-      </div>
-      <div id="paymentStatus" class="notice">Nenhum pagamento confirmado.</div>
-    `;
-    pagamento.appendChild(card);
-    this.updatePlanoValor();
-    this.renderPaymentMethod();
-    this.restoreLastPayment(false);
-    this.unlockPaidScreens();
-  };
-
-  App.updatePlanoValor = function(){
-    const p = this.getPlanoSelecionado();
-    if(this.el('pixValue')) this.el('pixValue').value = Number(p.valor).toFixed(2);
-  };
-
-  App.renderPaymentMethod = function(){
-    const method = this.el('payMethod') ? this.el('payMethod').value : 'pix';
-    if(this.el('pixPanel')) this.el('pixPanel').style.display = method === 'pix' ? 'block' : 'none';
-    if(this.el('cardPanel')) this.el('cardPanel').style.display = method === 'cartao' ? 'block' : 'none';
-  };
-
-  App.getPayerData = function(){
-    const nome = (this.el('payName')?.value || this.el('cadNome')?.value || this.user().nome || '').trim();
-    const email = (this.el('payEmail')?.value || this.el('cadEmail')?.value || this.user().email || '').trim();
-    if(!email || !email.includes('@')) throw new Error('Informe um e-mail válido do pagador.');
-    return {nome, email};
-  };
-
-  App.setPaymentStatus = function(html, kind='info'){
-    if(this.el('paymentStatus')){
-      this.el('paymentStatus').className = 'notice ' + kind;
-      this.el('paymentStatus').innerHTML = html;
-    }
-  };
-
-  App.createPixReal = async function(){
-    try{
-      const plano = this.getPlanoSelecionado();
-      const payer = this.getPayerData();
-      this.setPaymentStatus('Criando PIX no Mercado Pago...', 'info');
-      const res = await fetch('/.netlify/functions/create-pix', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({amount: plano.valor, description: plano.nome + ' — JusProf Trabalhista', payer})
-      });
-      const data = await res.json();
-      if(!res.ok) throw new Error(data.error || 'Falha ao criar PIX.');
-      localStorage.setItem(PAYMENT_KEY, JSON.stringify(data));
-      if(this.el('pixCopyPaste')) this.el('pixCopyPaste').value = data.qr_code || '';
-      if(this.el('pixQrBox')){
-        const qr = data.qr_code_base64 ? `<img alt="QR Code Pix" style="max-width:260px;width:100%;display:block;margin:10px 0" src="data:image/png;base64,${data.qr_code_base64}">` : '';
-        this.el('pixQrBox').className = 'notice ok';
-        this.el('pixQrBox').innerHTML = `<strong>PIX gerado.</strong><br>ID: ${this.esc(data.id)}<br>Status: ${this.esc(data.status)}${qr}<small>Copie o código ou escaneie o QR Code.</small>`;
+    document.querySelectorAll("div,section").forEach(el=>{
+      const t = (el.textContent || "").toLowerCase();
+      if(t.includes("inserir código de acesso") || t.includes("digite o código para liberar")){
+        el.style.display = "none";
       }
-      this.setPaymentStatus('PIX criado. Após pagar, clique em <strong>Verificar pagamento</strong>.', 'ok');
-      this.toast('PIX real gerado.');
-    }catch(e){
-      this.setPaymentStatus('Erro: ' + this.esc(e.message), 'danger');
-      this.toast(e.message);
-    }
-  };
+    });
 
-  App.copyPixReal = async function(){
-    const txt = this.el('pixCopyPaste')?.value || '';
-    if(!txt) return this.toast('Gere o PIX primeiro.');
-    try{
-      await navigator.clipboard.writeText(txt);
-    }catch(e){
-      const ta = this.el('pixCopyPaste'); ta.focus(); ta.select(); document.execCommand('copy');
-    }
-    this.toast('Pix Copia e Cola copiado.');
-  };
+    unlockScreens();
+  }
 
-  App.createCardCheckoutReal = async function(){
-    try{
-      const plano = this.getPlanoSelecionado();
-      const payer = this.getPayerData();
-      this.setPaymentStatus('Criando checkout Mercado Pago...', 'info');
-      const res = await fetch('/.netlify/functions/create-checkout', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({amount: plano.valor, description: plano.nome + ' — JusProf Trabalhista', payer})
+  async function verificarPagamentoReal(){
+    const paymentId = localStorage.getItem(PAYMENT_ID_KEY) || "";
+    if(!paymentId){
+      const msg = "Nenhum Payment ID encontrado neste navegador. Gere o QR Code PIX primeiro.";
+      ["jpPaymentStatus","paymentStatus","mpVerifyStatus"].forEach(id=>{
+        const el=$(id); if(el){ el.style.display="block"; el.className="notice danger"; el.textContent=msg; }
       });
+      toast(msg);
+      return false;
+    }
+
+    const ids = ["jpPaymentStatus","paymentStatus","mpVerifyStatus"];
+    ids.forEach(id=>{
+      const el=$(id); if(el){ el.style.display="block"; el.className="notice info"; el.textContent="Verificando pagamento no Mercado Pago..."; }
+    });
+
+    try{
+      const res = await fetch(`/.netlify/functions/check-payment?id=${encodeURIComponent(paymentId)}`);
       const data = await res.json();
-      if(!res.ok) throw new Error(data.error || 'Falha ao criar checkout.');
-      localStorage.setItem(PAYMENT_KEY, JSON.stringify(data));
-      const url = data.init_point || data.sandbox_init_point;
-      this.setPaymentStatus(`<strong>Checkout criado.</strong><br><a href="${this.esc(url)}" target="_blank">Abrir Mercado Pago</a><br>Depois retorne e clique em Verificar pagamento.`, 'ok');
-      if(url) window.open(url, '_blank');
-    }catch(e){
-      this.setPaymentStatus('Erro: ' + this.esc(e.message), 'danger');
-      this.toast(e.message);
-    }
-  };
 
-  App.restoreLastPayment = function(showToast=true){
-    try{
-      const data = JSON.parse(localStorage.getItem(PAYMENT_KEY)||'null');
-      if(!data) { if(showToast) this.toast('Nenhuma cobrança local.'); return null; }
-      if(data.qr_code && this.el('pixCopyPaste')) this.el('pixCopyPaste').value = data.qr_code;
-      this.setPaymentStatus(`Última cobrança carregada.<br>ID: ${this.esc(data.id || data.preference_id || '')}<br>Status: ${this.esc(data.status || 'pendente')}`, 'info');
-      return data;
-    }catch(e){ return null; }
-  };
+      if(!res.ok || data.error) throw new Error(data.error || "Erro ao verificar pagamento.");
 
-  App.checkPaymentStatus = async function(){
-    try{
-      const data = this.restoreLastPayment(false);
-      if(!data) throw new Error('Gere uma cobrança primeiro.');
-      const id = data.payment_id || data.id;
-      const external_reference = data.external_reference;
-      const url = id ? `/.netlify/functions/check-payment?id=${encodeURIComponent(id)}` : `/.netlify/functions/check-payment?external_reference=${encodeURIComponent(external_reference)}`;
-      this.setPaymentStatus('Consultando Mercado Pago...', 'info');
-      const res = await fetch(url);
-      const status = await res.json();
-      if(!res.ok) throw new Error(status.error || 'Falha ao consultar pagamento.');
-      if(status.approved){
-        this.markPaymentApproved(status);
-        this.setPaymentStatus(`<strong>Pagamento aprovado.</strong><br>ID: ${this.esc(status.id)}<br>Status: ${this.esc(status.status)}<br>Acesso liberado.`, 'ok');
-        this.toast('Pagamento aprovado. Acesso liberado.');
-      }else{
-        this.setPaymentStatus(`Pagamento ainda não aprovado.<br>Status: ${this.esc(status.status || 'não localizado')}<br>Detalhe: ${this.esc(status.status_detail || '')}`, 'info');
-        this.toast('Pagamento ainda pendente.');
+      if(isApproved(data)){
+        saveApprovedAccess(data);
+        setPaymentOk(data);
+        toast("✓ Pagamento aprovado! Acesso liberado.");
+        setTimeout(()=>{ if(window.App && App.show) App.show("rescisao"); }, 600);
+        return true;
       }
+
+      const msg = `Pagamento ainda não aprovado. Status atual: ${data.status || "desconhecido"} / ${data.status_detail || ""}`;
+      ids.forEach(id=>{
+        const el=$(id); if(el){ el.style.display="block"; el.className="notice danger"; el.innerHTML=msg; }
+      });
+      toast("Pagamento ainda pendente.");
+      return false;
+
     }catch(e){
-      this.setPaymentStatus('Erro: ' + this.esc(e.message), 'danger');
-      this.toast(e.message);
+      const msg = "Erro ao verificar pagamento: " + (e.message || e);
+      ids.forEach(id=>{
+        const el=$(id); if(el){ el.style.display="block"; el.className="notice danger"; el.textContent=msg; }
+      });
+      toast(msg);
+      return false;
     }
-  };
+  }
 
-  App.clearPaymentReal = function(){
-    localStorage.removeItem(PAYMENT_KEY);
-    localStorage.removeItem(ACCESS_KEY);
-    if(this.el('pixCopyPaste')) this.el('pixCopyPaste').value = '';
-    if(this.el('pixQrBox')) this.el('pixQrBox').className='notice info', this.el('pixQrBox').innerHTML='Clique em <strong>Gerar PIX real</strong>.';
-    this.setPaymentStatus('Pagamento local limpo.', 'info');
-    this.unlockPaidScreens();
-  };
+  function limparTelaPagamento(){
+    // Esconde o painel antigo de código, que virou desnecessário com confirmação automática.
+    const painelCodigo = $("painelCodigoAcesso");
+    if(painelCodigo) painelCodigo.style.display = "none";
 
-  const oldCalc = App.calcRescisao.bind(App);
-  App.calcRescisao = function(){
-    if(!this.requirePayment()) return 0;
-    return oldCalc();
-  };
+    document.querySelectorAll("h3, .notice, div").forEach(el=>{
+      const txt = (el.textContent || "").toLowerCase();
+      if(txt.includes("inserir código de acesso") || txt.includes("digite o código para liberar")){
+        const card = el.closest(".card") || el;
+        card.style.display = "none";
+      }
+    });
 
-  const oldShow = App.show.bind(App);
-  App.show = function(id){
-    if(['leitura','rescisao','manual','relatorio'].includes(id) && !this.paymentApproved()){
-      oldShow('pagamento');
-      setTimeout(()=>this.insertPaymentMethods(), 50);
-      this.toast('Faça o pagamento para liberar esta área.');
-      return;
+    // Ajusta mensagens antigas contraditórias.
+    document.querySelectorAll(".notice").forEach(el=>{
+      const txt = (el.textContent || "").toLowerCase();
+      if(txt.includes("status atual: approved") || txt.includes("detalhe: accredited")){
+        el.className = "notice ok";
+        el.innerHTML = "<strong>✓ Pagamento aprovado.</strong><br>Acesso liberado automaticamente.";
+      }
+    });
+  }
+
+  function instalar(){
+    if(!window.App) return;
+
+    App.jpVerifyPayment = verificarPagamentoReal;
+    App.mpVerifyPayment = verificarPagamentoReal;
+    App.hasPaidAccess = hasAccess;
+
+    const oldShow = App.show ? App.show.bind(App) : null;
+    if(oldShow && !App.__showAutoApprovedPatched){
+      App.__showAutoApprovedPatched = true;
+      App.show = function(id){
+        if(BLOCKED.has(id) && !hasAccess()){
+          const p = $("pagamento");
+          if(p){
+            oldShow("pagamento");
+            limparTelaPagamento();
+            toast("Área liberada após confirmação do pagamento.");
+            return;
+          }
+        }
+        const r = oldShow(id);
+        setTimeout(limparTelaPagamento, 150);
+        return r;
+      };
     }
-    oldShow(id);
-    if(id === 'pagamento') setTimeout(()=>this.insertPaymentMethods(), 50);
-  };
 
-  const oldInit = App.init.bind(App);
-  App.init = function(){
-    oldInit();
-    setTimeout(()=>{ this.insertPaymentMethods(); this.unlockPaidScreens(); }, 200);
-  };
+    limparTelaPagamento();
+    if(hasAccess()) unlockScreens();
+  }
+
+  window.addEventListener("load", ()=>{
+    setTimeout(instalar, 400);
+    setTimeout(instalar, 1200);
+    setTimeout(limparTelaPagamento, 1800);
+  });
 })();
 </script>
 
