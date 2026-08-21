@@ -2,7 +2,7 @@
 
 PWA para estimativa simples de rescisão trabalhista, destinada exclusivamente ao trabalhador.
 
-- Pagamento único: R$ 19,90 via PIX Mercado Pago.
+- Lançamento: R$ 10,50 por cálculo até 21/09/2026; ajuste automático para R$ 19,90 em 22/09/2026.
 - Cadastro mínimo: nome e e-mail.
 - Não solicita CPF, OAB ou documentos.
 - Não possui upload ou leitura de arquivos.
