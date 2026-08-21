@@ -11,6 +11,16 @@
 <section id="orientacoes" class="orient"><div><span class="step">COMO CALCULAMOS</span><h2>Uma estimativa mais clara.</h2></div><div class="orientGrid"><article><b>Projeção do aviso</b><p>O aviso indenizado pode repercutir nos avos de férias e 13º.</p></article><article><b>Férias separadas</b><p>O período aquisitivo não é confundido com o ano do 13º.</p></article><article><b>FGTS separado</b><p>Saldo, saque e multa aparecem sem soma indevida.</p></article></div></section><footer><b>JusProf Trabalhista.</b> Estimativa informativa. Não inclui médias, adicionais, comissões, faltas, descontos, INSS, IRRF, normas coletivas, estabilidades ou indenizações especiais.</footer></div></main>
 <script>
 const $=id=>document.getElementById(id),BRL=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}),num=s=>Number(String(s).replace(/\s/g,'').replace(/\.(?=\d{3}(?:\D|$))/g,'').replace(',','.'))||0,day=864e5,date=s=>{const[a,m,d]=s.split('-').map(Number);return new Date(Date.UTC(a,m-1,d))},add=(d,n)=>new Date(d.getTime()+n*day),diff=(a,b)=>Math.floor((b-a)/day);
+const OWNER_TEST_HASH='#teste-sara-6f9c2e41a7d8';
+const OWNER_TEST_UNTIL=Date.parse('2026-08-24T02:59:59Z');
+if(location.hash===OWNER_TEST_HASH&&Date.now()<=OWNER_TEST_UNTIL){
+  $('entry').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  const aviso=document.createElement('div');
+  aviso.textContent='MODO DE TESTE DA PROPRIETÁRIA — nenhum pagamento será cobrado';
+  aviso.style.cssText='position:sticky;top:0;z-index:99;background:#fff0bf;color:#60460b;padding:10px 16px;text-align:center;font:800 12px Arial;border-bottom:1px solid #e2c76d';
+  $('app').prepend(aviso);
+}
 function years(a,b){let n=b.getUTCFullYear()-a.getUTCFullYear();if(b<new Date(Date.UTC(b.getUTCFullYear(),a.getUTCMonth(),a.getUTCDate())))n--;return Math.max(0,n)}
 function avos13(a,b){let y=b.getUTCFullYear(),i=a.getUTCFullYear()===y?a:new Date(Date.UTC(y,0,1)),n=0;for(let m=i.getUTCMonth();m<=b.getUTCMonth();m++){let x=m===i.getUTCMonth()?i.getUTCDate():1,z=m===b.getUTCMonth()?b.getUTCDate():new Date(Date.UTC(y,m+1,0)).getUTCDate();if(z-x+1>=15)n++}return Math.min(12,n)}
 function avosFerias(a,b){let i=new Date(Date.UTC(b.getUTCFullYear(),a.getUTCMonth(),a.getUTCDate()));if(i>b)i=new Date(Date.UTC(b.getUTCFullYear()-1,a.getUTCMonth(),a.getUTCDate()));while(i<a)i=new Date(Date.UTC(i.getUTCFullYear()+1,i.getUTCMonth(),i.getUTCDate()));let n=0;for(let m=0;m<12;m++){let x=new Date(Date.UTC(i.getUTCFullYear(),i.getUTCMonth()+m,i.getUTCDate())),p=new Date(Date.UTC(i.getUTCFullYear(),i.getUTCMonth()+m+1,i.getUTCDate())),z=b<add(p,-1)?b:add(p,-1);if(z>=x&&diff(x,z)+1>=15)n++}return Math.min(12,n)}
