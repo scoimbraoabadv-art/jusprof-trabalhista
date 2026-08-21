@@ -19,8 +19,8 @@ if((location.hash===OWNER_TEST_HASH||OWNER_TEST_QUERY)&&Date.now()<=OWNER_TEST_U
   $('app').classList.remove('hidden');
   const aviso=document.createElement('div');
   aviso.textContent='MODO DE TESTE DA PROPRIETÁRIA — nenhum pagamento será cobrado';
-  aviso.style.cssText='position:sticky;top:0;z-index:99;background:#fff0bf;color:#60460b;padding:10px 16px;text-align:center;font:800 12px Arial;border-bottom:1px solid #e2c76d';
-  $('app').prepend(aviso);
+  aviso.style.cssText='position:fixed;left:0;right:0;top:0;z-index:99;background:#fff0bf;color:#60460b;padding:10px 16px;text-align:center;font:800 12px Arial;border-bottom:1px solid #e2c76d';
+  document.body.prepend(aviso);
   setTimeout(()=>$('calculo').scrollIntoView({block:'start'}),100);
 }
 function years(a,b){let n=b.getUTCFullYear()-a.getUTCFullYear();if(b<new Date(Date.UTC(b.getUTCFullYear(),a.getUTCMonth(),a.getUTCDate())))n--;return Math.max(0,n)}
