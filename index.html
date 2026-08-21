@@ -12,8 +12,9 @@
 <script>
 const $=id=>document.getElementById(id),BRL=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}),num=s=>Number(String(s).replace(/\s/g,'').replace(/\.(?=\d{3}(?:\D|$))/g,'').replace(',','.'))||0,day=864e5,date=s=>{const[a,m,d]=s.split('-').map(Number);return new Date(Date.UTC(a,m-1,d))},add=(d,n)=>new Date(d.getTime()+n*day),diff=(a,b)=>Math.floor((b-a)/day);
 const OWNER_TEST_HASH='#teste-sara-6f9c2e41a7d8';
+const OWNER_TEST_QUERY=new URLSearchParams(location.search).get('teste')==='sara-6f9c2e41a7d8';
 const OWNER_TEST_UNTIL=Date.parse('2026-08-24T02:59:59Z');
-if(location.hash===OWNER_TEST_HASH&&Date.now()<=OWNER_TEST_UNTIL){
+if((location.hash===OWNER_TEST_HASH||OWNER_TEST_QUERY)&&Date.now()<=OWNER_TEST_UNTIL){
   $('entry').classList.add('hidden');
   $('app').classList.remove('hidden');
   const aviso=document.createElement('div');
