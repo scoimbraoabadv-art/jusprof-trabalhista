@@ -1,0 +1,11 @@
+{
+  "name": "jusprof-trabalhista",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@netlify/blobs": "11.0.3"
+  }
+}
