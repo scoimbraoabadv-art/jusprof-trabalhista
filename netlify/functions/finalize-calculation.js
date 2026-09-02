@@ -1,4 +1,5 @@
 const crypto=require('crypto');
+const {readIdentityToken}=require('./identity-token');
 
 const headers={'Content-Type':'application/json','Cache-Control':'no-store','Access-Control-Allow-Origin':'*'};
 const digits=value=>String(value||'').replace(/\D/g,'');
@@ -33,7 +34,7 @@ function calculate(data){
 exports.handler=async event=>{
   if(event.httpMethod!=='POST')return{statusCode:405,headers,body:JSON.stringify({error:'Use POST.'})};
   try{
-    const token=process.env.MP_ACCESS_TOKEN,body=JSON.parse(event.body||'{}'),id=String(body.payment_id||''),cpf=digits(body.cpf);
+    const token=process.env.MP_ACCESS_TOKEN,body=JSON.parse(event.body||'{}'),id=String(body.payment_id||''),identityToken=String(body.identity_token||''),cpf=identityToken?readIdentityToken(identityToken,token):digits(body.cpf);
     if(!token||!/^\d+$/.test(id)||cpf.length!==11)return{statusCode:400,headers,body:JSON.stringify({error:'Dados de liberação inválidos.'})};
     const result=calculate(body.data||{});
     const paymentResponse=await fetch('https://api.mercadopago.com/v1/payments/'+id,{headers:{Authorization:'Bearer '+token}}),payment=await paymentResponse.json(),reference=String(payment.external_reference||''),expected=reference.startsWith('JPTRAB-P1050-')?10.50:reference.startsWith('JPTRAB-P1990-')?19.90:NaN,match=reference.match(/-C([a-f0-9]{24})-/),cpfOk=match&&crypto.timingSafeEqual(Buffer.from(match[1]),Buffer.from(cpfHash(cpf,token))),approved=paymentResponse.ok&&payment.status==='approved'&&cpfOk&&Number.isFinite(expected)&&Math.abs(Number(payment.transaction_amount)-expected)<.001;
