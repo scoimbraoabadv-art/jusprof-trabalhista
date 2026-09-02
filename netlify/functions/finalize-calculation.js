@@ -1,9 +1,6 @@
-const crypto=require('crypto');
-const {readIdentityToken}=require('./identity-token');
+const {validPaymentToken}=require('./payment-token');
 
 const headers={'Content-Type':'application/json','Cache-Control':'no-store','Access-Control-Allow-Origin':'*'};
-const digits=value=>String(value||'').replace(/\D/g,'');
-const cpfHash=(cpf,secret)=>crypto.createHmac('sha256',secret).update(digits(cpf)).digest('hex').slice(0,24);
 const number=value=>Number(String(value??'').replace(/\s/g,'').replace(/\.(?=\d{3}(?:\D|$))/g,'').replace(',','.'))||0;
 const day=864e5;
 const date=value=>{const [y,m,d]=String(value||'').split('-').map(Number);const result=new Date(Date.UTC(y,m-1,d));return y&&m&&d&&!Number.isNaN(result.getTime())?result:null};
@@ -34,15 +31,15 @@ function calculate(data){
 exports.handler=async event=>{
   if(event.httpMethod!=='POST')return{statusCode:405,headers,body:JSON.stringify({error:'Use POST.'})};
   try{
-    const token=process.env.MP_ACCESS_TOKEN,body=JSON.parse(event.body||'{}'),id=String(body.payment_id||''),identityToken=String(body.identity_token||''),cpf=identityToken?readIdentityToken(identityToken,token):digits(body.cpf);
-    if(!token||!/^\d+$/.test(id)||cpf.length!==11)return{statusCode:400,headers,body:JSON.stringify({error:'Dados de liberação inválidos.'})};
+    const token=process.env.MP_ACCESS_TOKEN,body=JSON.parse(event.body||'{}'),id=String(body.payment_id||''),paymentToken=String(body.payment_token||'');
+    if(!token||!/^\d+$/.test(id)||!validPaymentToken(id,paymentToken,token))return{statusCode:400,headers,body:JSON.stringify({error:'Dados de liberação inválidos.'})};
     const result=calculate(body.data||{});
-    const paymentResponse=await fetch('https://api.mercadopago.com/v1/payments/'+id,{headers:{Authorization:'Bearer '+token}}),payment=await paymentResponse.json(),reference=String(payment.external_reference||''),expected=reference.startsWith('JPTRAB-P1050-')?10.50:reference.startsWith('JPTRAB-P1990-')?19.90:NaN,match=reference.match(/-C([a-f0-9]{24})-/),cpfOk=match&&crypto.timingSafeEqual(Buffer.from(match[1]),Buffer.from(cpfHash(cpf,token))),approved=paymentResponse.ok&&payment.status==='approved'&&cpfOk&&Number.isFinite(expected)&&Math.abs(Number(payment.transaction_amount)-expected)<.001;
-    if(!approved)return{statusCode:403,headers,body:JSON.stringify({error:'Pagamento não confirmado para este trabalhador.'})};
+    const paymentResponse=await fetch('https://api.mercadopago.com/v1/payments/'+id,{headers:{Authorization:'Bearer '+token}}),payment=await paymentResponse.json(),reference=String(payment.external_reference||''),expected=reference.startsWith('JPTRAB-P1050-')?10.50:reference.startsWith('JPTRAB-P1990-')?19.90:NaN,approved=paymentResponse.ok&&payment.status==='approved'&&Number.isFinite(expected)&&Math.abs(Number(payment.transaction_amount)-expected)<.001;
+    if(!approved)return{statusCode:403,headers,body:JSON.stringify({error:'Pagamento não confirmado para este cálculo.'})};
     const {connectLambda,getStore}=await import('@netlify/blobs');
     connectLambda(event);
     const store=getStore('jusprof-calculos-utilizados'),key='payment-'+id;
-    const write=await store.setJSON(key,{used_at:new Date().toISOString(),cpf_hash:cpfHash(cpf,token)},{onlyIfNew:true});
+    const write=await store.setJSON(key,{used_at:new Date().toISOString()},{onlyIfNew:true});
     if(!write.modified)return{statusCode:409,headers,body:JSON.stringify({error:'Este pagamento já foi utilizado em um cálculo.'})};
     return{statusCode:200,headers,body:JSON.stringify({ok:true,result})};
   }catch(error){
