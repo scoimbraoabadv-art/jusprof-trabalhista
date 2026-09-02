@@ -6,6 +6,6 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@netlify/blobs": "11.0.3"
+    "@netlify/blobs": "10.7.13"
   }
 }
